@@ -1,0 +1,87 @@
+<!-- ============ cortina «La llave» (agente Entrada: partes/cortina.html + css/entrada.css + js/llave.js) ============
+     GENERADO por scripts/entrada-llave.py a partir de scripts/entrada-cortina.plantilla.html: no se edita a mano.
+     Una puerta de madera con su cerradura de hierro. La llave de la foto entra, gira un cuarto de vuelta y la puerta
+     se abre hacia dentro: debajo está la portada ya en su sitio (el papel con el dibujo). Unos 2,8 s.
+
+     El script de aquí va ANTES de la cortina: solo con JS se enseña (html.cortina-activa), así que sin JS no aparece
+     nunca. Expone Cortina.cortina = { alAbrirse(fn), alRetirarse(fn), abrir(), retirar(), abierta, fuera, marcas }
+     y lanza en document los eventos «cortina:abre» (cuando EMPIEZA a abrirse la puerta) y «cortina:fuera».
+     Se retira SIEMPRE: sin JS (nunca se enseña), con movimiento reducido o densidad sobria (se retira al instante),
+     y con red de seguridad: si js/llave.js no arranca en 2,5 s, o si algo se atasca, a los 8 s se va sola. -->
+<script>
+(function (d, w) {
+  var h = d.documentElement, C = w.Cortina = w.Cortina || {}, abierta = false, fuera = false, alAbrir = [], alFuera = [];
+  h.classList.add('js');
+  function avisar(lista, nombre) {
+    lista.splice(0).forEach(function (f) { try { f(); } catch (e) { console.warn(e); } });
+    try { d.dispatchEvent(new CustomEvent(nombre)); } catch (e) {}
+  }
+  function abrir() { if (abierta) return; abierta = true; h.classList.add('cortina-abriendo'); avisar(alAbrir, 'cortina:abre'); }
+  function retirar() {
+    if (fuera) return;
+    fuera = true;
+    clearTimeout(red1); clearTimeout(red2);
+    var c = d.getElementById('cortina');
+    if (c) c.hidden = true;
+    h.classList.remove('cortina-activa', 'cortina-abriendo');
+    h.classList.add('cortina-fuera');
+    abrir();
+    avisar(alFuera, 'cortina:fuera');
+  }
+  C.cortina = {
+    alAbrirse: function (f) { if (abierta) { try { f(); } catch (e) { console.warn(e); } } else alAbrir.push(f); },
+    alRetirarse: function (f) { if (fuera) { try { f(); } catch (e) { console.warn(e); } } else alFuera.push(f); },
+    abrir: abrir, retirar: retirar, enMarcha: false, marcas: {},
+    get abierta() { return abierta; }, get fuera() { return fuera; }
+  };
+  var red1 = setTimeout(function () { if (!C.cortina.enMarcha) retirar(); }, 2500);
+  var red2 = setTimeout(retirar, 8000);
+  var quieto = false;
+  try { quieto = w.matchMedia('(prefers-reduced-motion: reduce)').matches || h.classList.contains('densidad-sobria'); } catch (e) {}
+  if (quieto) retirar();
+  else {
+    h.classList.add('cortina-activa');
+    // la madera de la puerta se pide ya (solo si la cortina va a salir: con movimiento reducido no se baja)
+    try { var l = d.createElement('link'); l.rel = 'preload'; l.as = 'image'; l.href = 'img/llave/madera.webp'; d.head.appendChild(l); } catch (e) {}
+  }
+})(document, window);
+</script>
+<div class="cortina" id="cortina" aria-hidden="true">
+  <div class="cortina__luz"></div>
+  <div class="cortina__escena">
+    <div class="cortina__hoja">
+      <div class="cortina__herraje cortina__herraje--1"></div>
+      <div class="cortina__herraje cortina__herraje--2"></div>
+      <div class="cortina__cerradura">
+        <svg class="cortina__placa" viewBox="0 0 120 190" width="120" height="190" aria-hidden="true" focusable="false">
+          <defs>
+            <linearGradient id="cp-hierro" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3A332D"/><stop offset=".5" stop-color="#241F1B"/><stop offset="1" stop-color="#181411"/></linearGradient>
+          </defs>
+          <path d="M30 6H90Q104 6 106 20V78Q106 92 114 102Q119 109 112 116Q96 126 82 138Q72 148 66 166Q62 178 60 186Q58 178 54 166Q48 148 38 138Q24 126 8 116Q1 109 6 102Q14 92 14 78V20Q16 6 30 6Z" fill="url(#cp-hierro)" stroke="#5A4E44" stroke-width="1.4" stroke-linejoin="round"/>
+          <path d="M31 11H89Q100 11 101 21V78Q101 94 109 104Q112 108 107 112Q92 122 77 135Q66 146 60 170Q54 146 43 135Q28 122 13 112Q8 108 11 104Q19 94 19 78V21Q20 11 31 11Z" fill="none" stroke="#0E0B09" stroke-width="1" opacity=".8"/>
+          <circle cx="60" cy="62" r="23.5" fill="#15110F" stroke="#5A4E44" stroke-width="1.2"/>
+          <g fill="#4A4038" stroke="#0E0B09" stroke-width=".8">
+            <circle cx="30" cy="22" r="3.4"/><circle cx="90" cy="22" r="3.4"/><circle cx="24" cy="100" r="3"/><circle cx="96" cy="100" r="3"/><circle cx="60" cy="146" r="3"/>
+          </g>
+        </svg>
+        <div class="cortina__disco">
+          <svg viewBox="0 0 40 40" width="40" height="40" aria-hidden="true" focusable="false">
+            <circle cx="20" cy="20" r="19" fill="#2B2420" stroke="#6A5C4F" stroke-width="1.1"/>
+            <circle cx="20" cy="20" r="16" fill="none" stroke="#0E0B09" stroke-width=".7" opacity=".7"/>
+            <path d="M20 8.6A5.2 5.2 0 1 1 20 19.8A5.2 5.2 0 1 1 20 8.6ZM17.2 19.2H22.8L25.4 31.6H14.6Z" fill="#050403"/>
+          </svg>
+        </div>
+        <p class="cortina__nombre"><span class="cortina__nombre-1">Aldea Rural A Cortiña</span><span class="cortina__nombre-2">Pepín</span></p>
+      </div>
+      <div class="cortina__llave-caja">
+        <div class="cortina__llave" data-w="{{LLAVE_W}}" data-h="{{LLAVE_H}}" data-px="{{PUNTA_X}}" data-py="{{PUNTA_Y}}">
+          <div class="cortina__llave-gira">
+            <svg viewBox="0 0 {{LLAVE_W}} {{LLAVE_H}}" aria-hidden="true" focusable="false">{{LLAVE}}</svg>
+          </div>
+        </div>
+      </div>
+      <div class="cortina__sombra"></div>
+    </div>
+  </div>
+</div>
+<noscript><style>.cortina{display:none!important}</style></noscript>

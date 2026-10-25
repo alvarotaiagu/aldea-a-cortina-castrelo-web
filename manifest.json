@@ -1,0 +1,13 @@
+{
+  "name": "Aldea Rural A Cortiña · Pepín, Castrelo do Val",
+  "short_name": "A Cortiña",
+  "lang": "es",
+  "start_url": "./",
+  "display": "browser",
+  "background_color": "#F4EFE6",
+  "theme_color": "#2A2420",
+  "icons": [
+    { "src": "marca/icono-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "marca/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}

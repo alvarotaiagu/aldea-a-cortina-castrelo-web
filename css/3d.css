@@ -1,0 +1,144 @@
+/* «A un cuarto de hora de la aldea» (js/3d/): todo lo que mete el módulo dentro de [data-modulo="ruta"].
+   Colores y letras de la web, con respaldo: --papel #F4EFE6 · --papel-2 #EAE2D4 · --tinta #1F1A17 · --tinta-2 #4E4540 · --almagre #A3302C
+   · --almagre-hondo #7A2320 · --almagre-texto (almagre con tinta) · --liquen #C9BFA8 · letras --f-tit (Ibarra Real Nova), --f-txt (Libre Franklin),
+   --f-mono (Overpass Mono). El marco es de papel con filete de tinta y funciona sobre cualquier superficie de la sección (papel, piedra o almagre).
+   Ojo: ningún antepasado de .ruta-fijo puede llevar overflow hidden/auto ni transform (rompe el sticky). */
+
+[data-modulo="ruta"] { --r-papel: var(--papel, #F4EFE6); --r-papel-2: var(--papel-2, #EAE2D4); --r-tinta: var(--tinta, #1F1A17); --r-tinta-2: var(--tinta-2, #4E4540);
+  --r-almagre: var(--almagre, #A3302C); --r-almagre-hondo: var(--almagre-hondo, #7A2320);
+  --r-almagre-texto: var(--almagre-texto, color-mix(in srgb, #A3302C 80%, #1F1A17)); --r-liquen: var(--liquen, #C9BFA8); --r-cab: var(--cab, 72px);
+  --r-tit: var(--f-tit, 'Ibarra Real Nova', Georgia, serif); --r-txt: var(--f-txt, 'Libre Franklin', system-ui, sans-serif); --r-mono: var(--f-mono, 'Overpass Mono', ui-monospace, monospace); }
+
+/* ---------- la pista fijada: el marco se queda arriba mientras se baja (el recorrido es el scroll) ---------- */
+[data-modulo="ruta"] .ruta-pista { position: relative; height: calc(100svh - var(--r-cab) + 400svh); margin-bottom: clamp(28px, 4vw, 48px); }
+[data-modulo="ruta"] .ruta-fijo { position: sticky; top: var(--r-cab); height: calc(100svh - var(--r-cab)); }
+/* quieto (movimiento reducido o «sobria»): sin fijar, todo dibujado */
+[data-modulo="ruta"] .ruta-pista.ruta-quieta { height: auto; }
+[data-modulo="ruta"] .ruta-quieta .ruta-fijo { position: relative; top: auto; height: min(82svh, 760px); }
+@media (max-width: 699px) { [data-modulo="ruta"] .ruta-quieta .ruta-fijo { height: min(86svh, 150vw); } }
+
+[data-modulo="ruta"] .ruta-marco { position: relative; width: 100%; height: 100%; overflow: hidden; background: var(--r-papel-2); isolation: isolate; color: var(--r-tinta);
+  border-block: 1px solid var(--r-tinta); }
+[data-modulo="ruta"] .ruta-poster { position: absolute; inset: 0; display: block; }
+[data-modulo="ruta"] .ruta-poster img { width: 100%; height: 100%; object-fit: contain; display: block; }
+[data-modulo="ruta"] .ruta-poster[hidden], [data-modulo="ruta"] .ruta-plano[hidden] { display: none; }
+
+/* el lienzo 3D: cubre su hueco; si solo cambia el alto (barra del móvil) el búfer no se rehace: object-fit recorta */
+[data-modulo="ruta"] .ruta-lienzo, [data-modulo="ruta"] .ruta-rotulos, [data-modulo="ruta"] .ruta-plano { position: absolute; inset: 0; }
+[data-modulo="ruta"] canvas.ruta-gl { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; opacity: 0; transition: opacity .8s ease; }
+[data-modulo="ruta"] .con-3d canvas.ruta-gl { opacity: 1; }
+[data-modulo="ruta"] .con-3d.libre .ruta-lienzo { cursor: grab; }
+[data-modulo="ruta"] .con-3d .ruta-lienzo:active { cursor: grabbing; }
+/* foco del teclado con forma propia: contorno de tinta de 2 px sobre un halo de papel y un rayado corto de plumilla debajo */
+[data-modulo="ruta"] .ruta-lienzo:focus-visible { outline: 2px solid var(--r-tinta); outline-offset: -8px; box-shadow: inset 0 0 0 6px var(--r-papel); }
+[data-modulo="ruta"] .ruta-lienzo:focus-visible::after { content: ""; position: absolute; z-index: 4; left: 18px; bottom: 14px; width: 64px; height: 5px;
+  background: repeating-linear-gradient(115deg, var(--r-tinta) 0 2px, var(--r-papel) 2px 5px); }
+[data-modulo="ruta"] .en-plano .ruta-lienzo, [data-modulo="ruta"] .en-plano > .ruta-rotulos { visibility: hidden; pointer-events: none; }
+[data-modulo="ruta"] .mapa-suelto { box-shadow: inset 0 0 0 3px var(--r-almagre); }
+
+/* ---------- el plano 2D ---------- */
+[data-modulo="ruta"] .ruta-plano { background: var(--r-papel-2); z-index: 1; }
+[data-modulo="ruta"] .ruta-plano-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+[data-modulo="ruta"] .ruta-p-tinta { fill: none; stroke: var(--r-tinta); stroke-width: calc(5.5px / var(--z, 1)); stroke-linecap: round; stroke-linejoin: round; }
+[data-modulo="ruta"] .ruta-p-papel { fill: none; stroke: var(--r-papel); stroke-width: calc(1.7px / var(--z, 1)); stroke-linecap: round; stroke-linejoin: round; }
+[data-modulo="ruta"] .ruta-p-borde { fill: none; stroke: var(--r-papel); stroke-width: calc(5px / var(--z, 1)); stroke-linecap: round; stroke-linejoin: round; }
+[data-modulo="ruta"] .ruta-p-via { fill: none; stroke: var(--r-almagre); stroke-width: calc(2.6px / var(--z, 1)); stroke-linecap: round; stroke-linejoin: round; }
+[data-modulo="ruta"] .ruta-p-punto { fill: var(--r-papel); stroke: var(--r-tinta); stroke-width: calc(2px / var(--z, 1)); r: calc(5px / var(--z, 1)); }
+[data-modulo="ruta"] .ruta-p-punto.aldea { fill: var(--r-almagre); stroke: var(--r-papel); stroke-width: calc(2.5px / var(--z, 1)); r: calc(8px / var(--z, 1)); }
+
+/* ---------- rótulos a plumilla (en 3D y en plano): papel con filete doble, el nombre en Ibarra y los minutos en Overpass Mono ---------- */
+[data-modulo="ruta"] .ruta-rotulos { pointer-events: none; overflow: hidden; z-index: 2; }
+[data-modulo="ruta"] .ruta-rotulo { position: absolute; left: 0; top: 0; display: grid; justify-items: start; gap: 1px;
+  font: 400 12px/1.2 var(--r-txt); color: var(--r-tinta); white-space: nowrap; padding: 7px 12px 7px; background: var(--r-papel);
+  border: 1px solid var(--r-tinta); outline: 1px solid var(--r-tinta); outline-offset: -4px; will-change: transform; }
+[data-modulo="ruta"] .ruta-rotulo b { font: 600 1.06rem/1.1 var(--r-tit); }
+[data-modulo="ruta"] .ruta-rotulo small { font: 400 10.5px/1.3 var(--r-mono); color: var(--r-tinta-2); }
+[data-modulo="ruta"] .ruta-rotulo .min { font: 400 11px/1.1 var(--r-mono); color: var(--r-almagre-texto); }
+[data-modulo="ruta"] .ruta-rotulo .min i { font: 500 1.28rem/1 var(--r-tit); font-style: normal; font-variant-numeric: lining-nums tabular-nums; }
+[data-modulo="ruta"] .ruta-rotulo::after { content: ""; position: absolute; left: var(--guia, 50%); top: 100%; width: 1px; height: var(--tallo, 14px); background: var(--r-tinta); }
+[data-modulo="ruta"] .ruta-rotulo.abajo::after { top: auto; bottom: 100%; }
+/* la aldea: con su logo y el almagre arriba */
+[data-modulo="ruta"] .ruta-rotulo.aldea { display: flex; align-items: center; gap: 10px; border-top: 4px solid var(--r-almagre); padding-left: 9px; }
+[data-modulo="ruta"] .ruta-rotulo.aldea > span { display: grid; gap: 1px; }
+[data-modulo="ruta"] .ruta-logo { width: 40px; height: 40px; display: block; flex: none; }
+/* los de fuera del mapa: filete discontinuo y una flecha hacia donde están */
+[data-modulo="ruta"] .ruta-rotulo.fuera { border-style: dashed; outline: 0; grid-template-columns: auto auto; align-items: center; column-gap: 8px; }
+[data-modulo="ruta"] .ruta-rotulo.fuera small { grid-column: 1 / -1; }
+[data-modulo="ruta"] .ruta-flecha { width: 26px; height: 13px; fill: none; stroke: var(--r-almagre-texto); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; transform: rotate(var(--ang, 0deg)); }
+/* los kilómetros de cada anillo: una etiqueta mínima sobre la línea */
+[data-modulo="ruta"] .ruta-rotulo.anillo { display: block; padding: 2px 6px; font: 400 10.5px/1.2 var(--r-mono); outline: 0; }
+[data-modulo="ruta"] .ruta-rotulo.anillo::after { display: none; }
+[data-modulo="ruta"] .ruta-plano .ruta-rotulo { will-change: auto; }
+/* con todo el valle a la vista (o en el explorador) las cartelas de los sitios van sin la línea de km, para que quepan las cuatro */
+[data-modulo="ruta"] .rotulos-compactos .ruta-rotulo.sitio small { display: none; }
+
+/* ---------- encima del mapa: el chip de ahora, el aviso de carga y los botones ---------- */
+[data-modulo="ruta"] .ruta-chip, [data-modulo="ruta"] .ruta-carga { position: absolute; z-index: 3; margin: 0; font: 400 11.5px/1.25 var(--r-mono); color: var(--r-tinta);
+  background: var(--r-papel); border: 1px solid var(--r-tinta); padding: 6px 11px; }
+[data-modulo="ruta"] .ruta-chip { left: 14px; top: 14px; max-width: calc(100% - 380px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+[data-modulo="ruta"] .ruta-carga { left: 14px; top: 54px; max-width: calc(100% - 28px); }
+[data-modulo="ruta"] .ruta-chip[hidden], [data-modulo="ruta"] .ruta-carga[hidden], [data-modulo="ruta"] .ruta-btn[hidden] { display: none; }
+[data-modulo="ruta"] .sin-3d .ruta-carga { top: 14px; }
+
+[data-modulo="ruta"] .ruta-mandos { position: absolute; z-index: 3; top: 14px; right: 14px; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; max-width: calc(100% - 28px); }
+[data-modulo="ruta"] .ruta-btn { position: relative; font: 600 13px/1 var(--r-txt); letter-spacing: .02em; color: var(--r-tinta); background: var(--r-papel); border: 1px solid var(--r-tinta);
+  outline: 1px solid var(--r-tinta); outline-offset: -4px; padding: 0 16px; min-height: 40px; cursor: pointer; transition: background-color .2s, color .2s; }
+[data-modulo="ruta"] .ruta-btn:hover { background: var(--r-papel-2); }
+[data-modulo="ruta"] .ruta-btn[aria-pressed="true"] { background: var(--r-almagre-hondo); color: var(--r-papel); border-color: var(--r-almagre-hondo); outline-color: var(--r-papel); }
+[data-modulo="ruta"] #ruta-mover[aria-pressed="true"] { background: var(--r-almagre-hondo); }
+[data-modulo="ruta"] .ruta-btn:focus-visible { outline: 2px solid var(--r-tinta); outline-offset: 3px; box-shadow: 0 0 0 5px var(--r-papel); }
+[data-modulo="ruta"] .ruta-btn:focus-visible::after { content: ""; position: absolute; left: 12%; right: 12%; bottom: -13px; height: 4px;
+  background: repeating-linear-gradient(115deg, var(--r-tinta) 0 2px, var(--r-papel) 2px 5px); }
+@media (pointer: coarse) { [data-modulo="ruta"] .ruta-btn { min-height: 44px; } }
+
+/* ---------- la tabla de minutos: el cuaderno ---------- */
+[data-modulo="ruta"] .ruta-cuaderno { position: absolute; z-index: 3; left: max(16px, var(--lado, 16px)); bottom: 22px; width: min(340px, 34vw); padding: 16px 18px 12px;
+  background: var(--r-papel); border: 1px solid var(--r-tinta); outline: 1px solid var(--r-tinta); outline-offset: -5px; }
+[data-modulo="ruta"] .ruta-cuaderno p, [data-modulo="ruta"] .ruta-cuaderno ol { margin: 0; }
+[data-modulo="ruta"] .ruta-c-ceja { font: 400 10.5px/1.2 var(--r-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--r-almagre-texto); }
+[data-modulo="ruta"] .ruta-c-grande { margin-top: 4px !important; display: flex; align-items: baseline; gap: 8px; }
+[data-modulo="ruta"] .ruta-c-grande b { font: 500 clamp(3rem, 4.4vw, 4.2rem)/1 var(--r-tit); font-variant-numeric: lining-nums tabular-nums; color: var(--r-tinta); min-width: 2ch; }
+[data-modulo="ruta"] .ruta-c-grande span { font: 400 12px/1.2 var(--r-mono); color: var(--r-tinta-2); }
+[data-modulo="ruta"] .ruta-c-sitio { margin-top: 2px !important; font: 400 13px/1.35 var(--r-txt); color: var(--r-tinta); min-height: 2.7em; }
+[data-modulo="ruta"] .ruta-c-lista { list-style: none; padding: 0; margin-top: 8px !important; border-top: 1px solid var(--r-tinta); }
+[data-modulo="ruta"] .ruta-c-lista li { display: flex; align-items: baseline; gap: 8px; padding: 5px 0 3px; color: var(--r-tinta-2); opacity: .75; transition: opacity .2s, color .2s; }
+[data-modulo="ruta"] .ruta-c-lista .n { font: 400 15px/1.2 var(--r-tit); }
+[data-modulo="ruta"] .ruta-c-lista i { flex: 1; min-width: 12px; border-bottom: 1px dotted var(--r-tinta-2); transform: translateY(-3px); }
+[data-modulo="ruta"] .ruta-c-lista .m { font: 400 12px/1.2 var(--r-mono); }
+[data-modulo="ruta"] .ruta-c-lista li.es-hecho { opacity: 1; color: var(--r-tinta); }
+[data-modulo="ruta"] .ruta-c-lista li.es-act { opacity: 1; color: var(--r-almagre-texto); }
+[data-modulo="ruta"] .ruta-c-lista li.es-act .n { font-weight: 600; }
+[data-modulo="ruta"] .ruta-c-lista li.es-act::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--r-almagre); align-self: center; margin-right: -2px; flex: none; }
+[data-modulo="ruta"] .ruta-c-nota { margin-top: 8px !important; padding-top: 7px; border-top: 1px solid var(--r-tinta); font: 400 11.5px/1.4 var(--r-txt); color: var(--r-tinta-2); }
+[data-modulo="ruta"] .ruta-c-fuente { margin-top: 5px !important; font: 400 9.5px/1.3 var(--r-mono); color: var(--r-tinta-2); }
+
+/* solo para lectores de pantalla: el itinerario en texto */
+[data-modulo="ruta"] .ruta-vh { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+
+/* ---------- móvil ---------- */
+@media (max-width: 699px) {
+  [data-modulo="ruta"] .ruta-chip { left: 10px; right: 10px; top: 10px; max-width: none; white-space: normal; font-size: 10.5px; padding: 5px 9px; }
+  [data-modulo="ruta"] .ruta-mandos { top: 50px; right: 10px; max-width: calc(100% - 20px); }
+  [data-modulo="ruta"] .ruta-btn { font-size: 12.5px; padding: 0 12px; }
+  [data-modulo="ruta"] .ruta-carga { left: 10px; top: 100px; font-size: 10.5px; }
+  [data-modulo="ruta"] .sin-3d .ruta-carga { top: 10px; }
+  [data-modulo="ruta"] .ruta-cuaderno { left: 10px; right: 10px; bottom: 10px; width: auto; padding: 10px 14px 8px; display: grid; grid-template-columns: auto 1fr; column-gap: 12px; align-items: end; }
+  [data-modulo="ruta"] .ruta-c-ceja { grid-column: 1 / -1; font-size: 9.5px; }
+  [data-modulo="ruta"] .ruta-c-grande { grid-column: 1; margin-top: 0 !important; }
+  [data-modulo="ruta"] .ruta-c-grande b { font-size: 2.6rem; }
+  [data-modulo="ruta"] .ruta-c-sitio { grid-column: 2; font-size: 12px; min-height: 2.7em; align-self: center; }
+  [data-modulo="ruta"] .ruta-c-lista, [data-modulo="ruta"] .ruta-c-nota { display: none; }
+  [data-modulo="ruta"] .ruta-c-fuente { grid-column: 1 / -1; font-size: 8.5px; }
+  [data-modulo="ruta"] .ruta-rotulo { font-size: 11px; padding: 5px 9px; }
+  [data-modulo="ruta"] .ruta-rotulo b { font-size: .98rem; }
+  [data-modulo="ruta"] .ruta-rotulo .min i { font-size: 1.15rem; }
+  [data-modulo="ruta"] .ruta-rotulo small { font-size: 9.5px; }
+  [data-modulo="ruta"] .ruta-logo { width: 30px; height: 30px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-modulo="ruta"] canvas.ruta-gl, [data-modulo="ruta"] .ruta-btn, [data-modulo="ruta"] .ruta-c-lista li { transition: none; }
+}
+
+/* en plano no hay mapa que mover */
+[data-modulo="ruta"] .en-plano #ruta-mover, [data-modulo="ruta"] .en-plano #ruta-volver { display: none; }

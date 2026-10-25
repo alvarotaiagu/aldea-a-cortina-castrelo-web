@@ -1,0 +1,166 @@
+/* ------------------------------------------------------------------
+   Aldea Rural A Cortiña · Entrada (agente Entrada):
+     1. la cortina «La llave»      (#cortina, partes/cortina.html, js/llave.js)
+     2. la portada «Del dibujo a la aldea» ([data-modulo="dibujo"], js/dibujo.js)
+     3. el círculo del pie          ([data-modulo="circulo"], js/dibujo.js)
+   Colores y letras de la web con var(--x, valor) por si estilos.css aún no está.
+   ------------------------------------------------------------------ */
+
+/* ================= 1. cortina «La llave» =================
+   Solo se ve con html.cortina-activa (lo pone el script de la parte): sin JS no aparece nunca.
+   Estructura: .cortina (perspectiva, sin fondo: debajo está la portada) > .cortina__escena (la cámara avanza)
+   > .cortina__hoja (rotateY, bisagra a la izquierda) > tablas de madera, herrajes, cerradura, llave. */
+#cortina.cortina {
+  position: fixed; inset: 0; z-index: 1000; display: none;
+  width: 100%; height: 100%; overflow: hidden;
+  perspective: max(900px, 125vw); perspective-origin: 50% 50%;
+  contain: strict;
+  --lx: 68%;          /* dónde cae la cerradura (cerca del canto libre) */
+  --placa: clamp(112px, 25vmin, 250px);
+}
+html.cortina-activa #cortina.cortina { display: block; }
+#cortina.cortina[hidden], html.cortina-fuera #cortina.cortina { display: none !important; }
+@media (prefers-reduced-motion: reduce) { #cortina.cortina { display: none !important; } }
+@media (max-aspect-ratio: 1/1) { #cortina.cortina { --lx: 52%; } }
+html.cortina-activa, html.cortina-activa body { overflow: hidden; }
+
+/* la franja de luz cálida que se cuela por la rendija (detrás de la hoja, fuera de la escena 3D) */
+#cortina .cortina__luz {
+  position: absolute; top: 0; right: 0; bottom: 0; width: 70%; opacity: 0; pointer-events: none;
+  background:
+    linear-gradient(to left, rgba(255, 226, 168, .96) 0%, rgba(255, 214, 150, .72) 22%, rgba(255, 200, 130, .26) 58%, rgba(255, 200, 130, 0) 100%);
+}
+#cortina .cortina__escena { position: absolute; inset: 0; transform-style: preserve-3d; will-change: transform; }
+#cortina .cortina__hoja {
+  position: absolute; left: 0; top: -30%; width: calc(100% + 2px); height: 160%;
+  transform-origin: 0 50%;
+  background: #2A1D15 url(../img/llave/madera.webp) 0 0 / auto 100% repeat-x;
+  will-change: transform; overflow: hidden;
+}
+/* viñeta: la puerta se oscurece hacia los cantos, y la luz de la sala cae desde arriba */
+#cortina .cortina__hoja::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 72% 58% at var(--lx) 50%, rgba(255, 196, 120, .13), rgba(255, 196, 120, 0) 70%),
+    radial-gradient(ellipse 120% 100% at 50% 50%, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, .62) 100%);
+}
+/* al girar se oscurece (lo mueve el JS) */
+#cortina .cortina__sombra { position: absolute; inset: 0; background: #0B0705; opacity: 0; pointer-events: none; }
+
+/* dos pletinas de hierro con remaches, a lo ancho de la puerta (a 22 % y a 78 % de la hoja, que mide 160 % de la pantalla) */
+#cortina .cortina__herraje {
+  position: absolute; left: 0; right: 0; height: clamp(26px, 6.2vmin, 58px);
+  background:
+    radial-gradient(circle at 50% 50%, #6B5E52 0 .55vmin, #231E1A .62vmin 1.15vmin, transparent 1.2vmin) 0 0 / 9.5vmin 100% repeat-x,
+    linear-gradient(#3B342E, #1B1714 52%, #2C2621);
+  box-shadow: 0 .5vmin 1.2vmin rgba(0, 0, 0, .55), inset 0 1px 0 rgba(255, 255, 255, .07);
+}
+#cortina .cortina__herraje--1 { top: 22%; }
+#cortina .cortina__herraje--2 { top: 78%; }
+
+/* la cerradura: placa de hierro con el disco de la bocallave encima */
+#cortina .cortina__cerradura {
+  position: absolute; left: var(--lx); top: 50%; width: var(--placa); aspect-ratio: 120 / 190;
+  transform: translate(-50%, -52%);
+  filter: drop-shadow(0 .8vmin 1.4vmin rgba(0, 0, 0, .6));
+}
+#cortina .cortina__placa { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+#cortina .cortina__disco {
+  position: absolute; left: 50%; top: 32.63%; width: 31.67%; aspect-ratio: 1;
+  transform: translate(-50%, -50%) rotate(-53deg); will-change: transform;
+}
+#cortina .cortina__disco svg { width: 100%; height: 100%; display: block; }
+
+/* el nombre, pequeño, debajo de la cerradura */
+#cortina .cortina__nombre {
+  position: absolute; top: 100%; left: 50%; width: 300%; margin: 1.6vmin 0 0; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: .5vmin; text-align: center;
+  color: var(--liquen, #C9BFA8); opacity: 0; transition: opacity .6s ease .25s;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, .7);
+}
+html.cortina-activa #cortina.es-lista .cortina__nombre { opacity: .82; }
+#cortina .cortina__nombre-1 { font: italic 400 clamp(.95rem, 2.1vmin, 1.5rem)/1.15 var(--f-tit, 'Ibarra Real Nova', Georgia, serif); letter-spacing: .01em; }
+#cortina .cortina__nombre-2 { font: 400 clamp(.6rem, 1.3vmin, .8rem)/1.2 var(--f-mono, 'Overpass Mono', ui-monospace, monospace); letter-spacing: .34em; text-transform: uppercase; opacity: .8; }
+
+/* la llave: una caja sin transform (recorta lo que ya ha entrado en la cerradura) con la llave dentro */
+#cortina .cortina__llave-caja { position: absolute; inset: 0; pointer-events: none; }
+#cortina .cortina__llave {
+  position: absolute; left: 0; top: 0; transform-origin: 0 0; will-change: transform; opacity: 0;
+  filter: drop-shadow(0 .5vmin .9vmin rgba(0, 0, 0, .6));
+}
+#cortina .cortina__llave-gira { transform-origin: 49.6% 50%; will-change: transform; }
+#cortina .cortina__llave svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+/* ================= 2. portada «Del dibujo a la aldea» =================
+   Respaldo (sin JS, movimiento reducido o sobria): lo pinta la web (la foto con el titular encima).
+   Montado con movimiento: la caja del módulo se hace alta (aquí pasa el scroll del viaje) y dentro queda un
+   escenario fijado con position: sticky. Ojo: ningún antepasado puede llevar overflow: hidden/auto (rompe el sticky);
+   si hace falta recortar, overflow: clip. */
+[data-modulo="dibujo"].dibujo--viaje {
+  position: relative !important; inset: auto !important; display: block; width: 100% !important; min-height: 0 !important;
+  height: calc(100vh + 300vh) !important;
+  height: calc(100lvh + 300svh) !important;
+}
+/* el respaldo se queda en el HTML pero no se ve mientras el canvas hace de portada */
+[data-modulo="dibujo"].dibujo--viaje > picture,
+[data-modulo="dibujo"].dibujo--viaje > img { display: none; }
+[data-modulo="dibujo"] .dibujo__escena {
+  position: sticky; top: 0; width: 100%; overflow: hidden;
+  height: 100vh; height: 100lvh;
+  background: var(--papel, #F4EFE6); color: var(--tinta, #1F1A17);
+  touch-action: pan-y pinch-zoom;
+  isolation: isolate;
+}
+[data-modulo="dibujo"] .dibujo__lienzo { position: absolute; inset: 0; width: 100%; height: 100%; display: block; z-index: 0; }
+/* el gesto: la foto a tinta, destapada con el dedo (no recibe eventos: los recibe el escenario) */
+[data-modulo="dibujo"] .dibujo__tinta { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; z-index: 2; }
+/* velo inferior: asienta el titular sobre la foto */
+[data-modulo="dibujo"] .dibujo__velo {
+  position: absolute; inset: 0; z-index: 1; opacity: 0; pointer-events: none;
+  background: linear-gradient(to top, rgba(31, 26, 23, .9) 0%, rgba(31, 26, 23, .8) 30%, rgba(31, 26, 23, .6) 55%, rgba(31, 26, 23, .3) 78%, rgba(31, 26, 23, 0) 100%);
+}
+/* el titular que pone la web va encima de todo, anclado abajo y en claro: el módulo lo adopta dentro del escenario
+   y queda sobre la foto con velo oscuro (la web lo pinta en tinta mientras el módulo está montado, pensando en el
+   papel; aquí se le dan los mismos tokens que cuando está sin montar). */
+[data-modulo="dibujo"] .dibujo__escena > .portada-texto {
+  position: absolute; z-index: 3; left: 0; right: 0; bottom: calc(100lvh - 100svh); margin-inline: auto; width: 100%;
+  color: var(--papel, #F4EFE6);
+  --foco: var(--papel, #F4EFE6); --btn-f: var(--papel, #F4EFE6); --btn-t: var(--tinta, #1F1A17);
+  --acento: #EBCFC8; --acento: color-mix(in srgb, var(--almagre, #A3302C) 14%, var(--papel, #F4EFE6));   /* la teja de la web, algo más clara: el rótulo de arriba cae donde el velo es más fino */ --texto: var(--papel, #F4EFE6); --texto-2: #E9E2D6;
+}
+
+/* el nombre, sobre el papel, antes de entrar en el dibujo */
+[data-modulo="dibujo"] .dibujo__nombre {
+  position: absolute; z-index: 3; left: 0; right: 0; top: clamp(84px, 13.5vh, 150px);
+  display: flex; flex-direction: column; align-items: center; gap: .55rem; text-align: center; padding: 0 16px;
+  pointer-events: none; will-change: opacity, translate;
+}
+[data-modulo="dibujo"] .dibujo__lugar { margin: 0; font: 400 clamp(.64rem, 1.5vw, .78rem)/1.3 var(--f-mono, 'Overpass Mono', ui-monospace, monospace); letter-spacing: .26em; text-transform: uppercase; color: var(--tinta-2, #4E4540); }
+[data-modulo="dibujo"] .dibujo__titulo { margin: 0; font: 500 clamp(2.1rem, 5.4vw, 4.6rem)/1.02 var(--f-tit, 'Ibarra Real Nova', Georgia, serif); letter-spacing: -.012em; color: var(--tinta, #1F1A17); }
+[data-modulo="dibujo"] .dibujo__titulo em { font-style: italic; font-weight: 400; color: var(--almagre-texto, #8E2A27); }
+/* la pista del scroll */
+[data-modulo="dibujo"] .dibujo__pista {
+  position: absolute; z-index: 3; left: 0; right: 0; bottom: calc(100lvh - 100svh + 22px); margin: 0; display: flex; flex-direction: column; align-items: center; gap: 8px;
+  font: 400 .7rem/1.2 var(--f-mono, 'Overpass Mono', ui-monospace, monospace); letter-spacing: .2em; text-transform: uppercase; color: var(--tinta-2, #4E4540); pointer-events: none;
+}
+[data-modulo="dibujo"] .dibujo__pista i { display: block; width: 1px; height: 38px; background: repeating-linear-gradient(to bottom, var(--tinta, #1F1A17) 0 4px, transparent 4px 8px); transform-origin: top; animation: dibujo-pista 2.2s ease-in-out infinite; }
+@keyframes dibujo-pista { 0%, 100% { transform: scaleY(.35); opacity: .5; } 50% { transform: scaleY(1); opacity: 1; } }
+/* la pista del gesto: mono, pequeñita, arriba a la derecha de la foto */
+[data-modulo="dibujo"] .dibujo__gesto-pista {
+  position: absolute; z-index: 3; right: 16px; top: 84px; margin: 0; opacity: 0; transition: opacity .7s ease; pointer-events: none;
+  font: 400 .68rem/1.3 var(--f-mono, 'Overpass Mono', ui-monospace, monospace); letter-spacing: .14em; text-transform: uppercase; color: #F4EFE6;
+  padding: 6px 10px; background: rgba(31, 26, 23, .55); border-radius: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-modulo="dibujo"] .dibujo__pista i { animation: none; }
+  [data-modulo="dibujo"] .dibujo__gesto-pista { transition: none; }
+}
+
+/* ================= 3. círculo del pie «El círculo se cierra» ================= */
+[data-modulo="circulo"].circulo { display: block; position: relative; color: inherit; }
+[data-modulo="circulo"].circulo--montado > :not(.circulo__caja) { display: none; }
+[data-modulo="circulo"] .circulo__caja { position: relative; width: 100%; max-width: 460px; margin-inline: auto; }
+[data-modulo="circulo"] .circulo__logo { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: contain; transition: none; }
+[data-modulo="circulo"] .circulo__aro { position: absolute; inset: 0; width: 100%; height: 100%; display: block; overflow: visible; }
+[data-modulo="circulo"] .circulo__trazo { fill: none; stroke: currentColor; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; }
+[data-modulo="circulo"] .circulo__punta { fill: currentColor; opacity: 0; }

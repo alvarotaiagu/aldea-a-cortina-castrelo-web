@@ -1,0 +1,66 @@
+<!-- script bloqueante: clases antes del primer pintado y el PUENTE con la cortina («La llave», módulo Entrada).
+     Contrato (lo escribe la web; Entrada solo lo usa):
+       window.Cortina.alAbrirse(fn)    → fn se llama cuando la puerta EMPIEZA a abrirse (o enseguida si ya empezó)
+       window.Cortina.abrir()          → la cortina avisa: «empiezo a abrirme» (idempotente)
+       window.Cortina.retirarCortina() → la cortina avisa: «ya me he ido» (idempotente; también hace abrir())
+       eventos en document: «cortina:abre» y «cortina:fuera» hacen lo mismo que abrir() y retirarCortina()
+       (valen también «cortina:abierta» y «cortina:retirada», y los de la cortina de la hermana: «tulla:cortina-abre/-fuera»).
+     <html> recibe: «js» ya aquí; «cortina-activa» lo pone la parte de la cortina; «cortina-fuera» al retirarla.
+     Red de seguridad: a los 6,5 s la cortina se retira sola, haga lo que haga el resto. -->
+<script>
+(function (d) {
+  var h = d.documentElement;
+  h.classList.add('js');
+  // MANDO DE MAQUETA (no viaja al cliente): solo con ?revision
+  try {
+    var q = new URLSearchParams(location.search);
+    if (q.has('revision')) {
+      h.classList.add('revision');
+      if (q.get('densidad') === 'sobria') h.classList.add('densidad-sobria');
+    }
+  } catch (e) {}
+  var C = window.Cortina = window.Cortina || {};
+  var cola = [];
+  var avisar = function (n) { try { d.dispatchEvent(new CustomEvent(n)); } catch (e) {} };
+  C.alAbrirse = function (fn) { if (C.abierta) { try { fn(); } catch (e) { console.warn(e); } } else cola.push(fn); };
+  C.abrir = function () {
+    if (C.abierta) return;
+    C.abierta = true;
+    cola.splice(0).forEach(function (fn) { try { fn(); } catch (e) { console.warn(e); } });
+    avisar('cortina:abierta');
+  };
+  C.retirarCortina = function () {
+    if (C.cortinaFuera) return;
+    C.cortinaFuera = true;
+    clearTimeout(window.__redCortina);
+    h.classList.remove('cortina-activa');
+    h.classList.add('cortina-fuera');
+    C.abrir();
+    if (!C.__ev) avisar('cortina:fuera');   // si la retira la web (red de seguridad), también avisa a los módulos (el 3D lo espera)
+    avisar('cortina:fuera-ya');
+  };
+  ['cortina:abre', 'cortina:abierta', 'tulla:cortina-abre'].forEach(function (n) { d.addEventListener(n, function () { C.abrir(); }); });
+  ['cortina:fuera', 'cortina:retirada', 'tulla:cortina-fuera'].forEach(function (n) { d.addEventListener(n, function () { C.__ev = true; try { C.retirarCortina(); } finally { C.__ev = false; } }); });
+  // red de seguridad por si main.js o la cortina no llegan: la cortina se va sola
+  window.__redCortina = setTimeout(function () { C.retirarCortina(); }, 6500);
+})(document);
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ibarra+Real+Nova:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Libre+Franklin:wght@400;500;600&family=Overpass+Mono&display=swap">
+<link rel="stylesheet" href="css/estilos.css">
+<link rel="stylesheet" href="css/piedra.css">
+<link rel="stylesheet" href="css/entrada.css">
+<link rel="stylesheet" href="css/plano.css">
+<link rel="stylesheet" href="css/comarca.css">
+<link rel="stylesheet" href="css/3d.css">
+<link rel="icon" href="marca/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="marca/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="marca/apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2A2420">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:image" content="img/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<noscript><style>.cortina,#cortina{display:none!important}</style></noscript>

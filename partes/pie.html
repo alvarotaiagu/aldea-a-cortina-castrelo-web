@@ -1,0 +1,65 @@
+<!-- ============ pie «El círculo se cierra»: la pieza la hace Entrada (Cortina.dibujo.circulo, en [data-modulo="circulo"]);
+     la web pone el hueco, con el logo real como respaldo. Superficie papel: la tinta del logo vive sobre papel. ============ -->
+<footer class="pie con-canto con-canto--2 sup-papel" id="pie" data-sup="papel">
+  <div class="env">
+    <div class="pie__arriba">
+      <div class="pie__circulo" data-modulo="circulo">
+        <!-- respaldo: el logo real, entero -->
+        <img src="marca/logo-480.png" srcset="marca/logo-480.png 459w" width="459" height="331" alt="Aldea Rural A Cortiña, Pepín, Castrelo do Val: el dibujo a plumilla de una solaina dentro de un círculo" loading="lazy" decoding="async">
+      </div>
+      <div class="pie__frase">
+        <p class="pie__eti mono">Pepín · Castrelo do Val · Ourense</p>
+        <p class="pie__tit">Una aldea pequeña dentro de la aldea.</p>
+        <p class="pie__txt">Una casa y dos apartamentos de piedra y almagre, con piscina en julio y agosto, a 8,5 km de Verín.</p>
+        <p><a class="btn btn--marca" href="#reservar">Elegir llave</a></p>
+      </div>
+    </div>
+
+    <div class="pie__cols">
+      <div>
+        <h2 class="pie__h">Cómo llegar</h2>
+        <p>Pepín, 40<br>32625 Castrelo do Val (Ourense)</p>
+        <p><a href="#llegar">Mapa y distancias</a></p>
+      </div>
+      <div>
+        <h2 class="pie__h">Reservas</h2>
+        <p><a href="tel:+34645263522" class="mono">645 263 522</a><br><a href="tel:+34988419215" class="mono">988 41 92 15</a><br><a href="mailto:a.p.pepin@hotmail.com">a.p.pepin@hotmail.com</a></p>
+      </div>
+      <div>
+        <h2 class="pie__h">Por aquí</h2>
+        <p><a href="#aldea">La aldea en plano</a><br><a href="#dentro">Por dentro</a><br><a href="#barra">La barra</a><br><a href="#cuando">Cuándo venir</a></p>
+      </div>
+    </div>
+
+    <div class="pie__ayudas" aria-labelledby="ayudas-tit">
+      <h2 class="pie__h" id="ayudas-tit">Proyectos con ayudas públicas</h2>
+      <ul class="ayudas">
+        <li><img src="img/ayudas/feder-galicia.png" width="1032" height="700" loading="lazy" decoding="async" alt="Cartel de la Xunta de Galicia y la Unión Europea: subvenciones para actuaciones de mejora de las infraestructuras de los establecimientos turísticos de alojamiento y restauración, financiadas con el Fondo Europeo de Desarrollo Regional (FEDER), programa operativo FEDER Galicia 2014-2020."></li>
+        <li><img src="img/ayudas/inega-bono-energia.png" width="851" height="551" loading="lazy" decoding="async" alt="Cartel de la Xunta de Galicia y el Instituto Energético de Galicia (INEGA): convocatoria de subvenciones para proyectos de mejora energética, programa Bono enerxía Peme 2021."></li>
+        <li><img src="img/ayudas/next-generation-fotovoltaica.png" width="1023" height="730" loading="lazy" decoding="async" alt="Cartel de la instalación fotovoltaica en Casa Rural A Cortiña, financiada por la Unión Europea (NextGenerationEU) en el marco del Plan de Recuperación, Transformación y Resiliencia, con la Xunta de Galicia, el Gobierno de España e IDAE."></li>
+      </ul>
+    </div>
+
+    <div class="pie__legal">
+      <p>Registro de turismo: <span class="sup">por confirmar</span></p>
+      <nav aria-label="Legal"><a href="aviso-legal.html">Aviso legal</a><a href="privacidad.html">Privacidad</a><a href="cookies.html">Cookies</a><a href="accesibilidad.html">Accesibilidad</a><button type="button" id="abrir-cookies">Preferencias de cookies</button></nav>
+      <p>© <span id="anno">2026</span> Aldea Rural A Cortiña · Pepín, Castrelo do Val (Ourense)</p>
+    </div>
+  </div>
+</footer>
+
+<div class="cookies" id="cookies" role="region" aria-label="Aviso de cookies" hidden>
+  <p>Esta web no usa cookies de análisis ni de publicidad. Guarda en tu navegador que has visto este aviso; las letras vienen de Google Fonts y el mapa de Google solo se carga si lo pides. <a href="cookies.html">Más información</a></p>
+  <div class="cookies__acc">
+    <button class="btn btn--marca" type="button" id="ck-si">Entendido</button>
+    <button class="btn btn--hueco" type="button" id="ck-no">Solo lo necesario</button>
+  </div>
+</div>
+
+<!-- MANDO DE MAQUETA (no viaja al cliente): solo con ?revision -->
+<div class="mando" id="mando" role="group" aria-label="Dos versiones de la misma web" hidden>
+  <span class="mando__eti">Versión</span>
+  <button type="button" data-densidad="aldea" aria-pressed="true">Aldea</button>
+  <button type="button" data-densidad="sobria" aria-pressed="false">Sobria</button>
+</div>
+<!-- fin del MANDO DE MAQUETA -->

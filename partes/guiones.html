@@ -1,0 +1,15 @@
+<!-- librerías (jsDelivr, con versión fija): Lenis suaviza el scroll; GSAP y ScrollTrigger los usan los módulos -->
+<script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
+<!-- los módulos (cada uno en su archivo; si falta alguno, construir.mjs quita su etiqueta y se queda el respaldo del HTML) -->
+<script src="js/llave.js" defer></script>
+<script src="js/dibujo.js" defer></script>
+<script src="js/plano.js" defer></script>
+<script src="js/comarca.js" defer></script>
+<script src="js/barra.js" defer></script>
+<!-- la web -->
+<script src="js/reserva.js" defer></script>
+<script src="js/main.js" defer></script>
+<!-- el 3D de «Alrededor»: módulo diferido; si no carga, se queda el plano -->
+<script type="module" src="js/3d/arranque.js" onerror="var r=document.getElementById('alrededor');if(r)r.classList.add('sin-3d')"></script>

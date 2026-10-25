@@ -1,0 +1,31 @@
+<a class="saltar" href="#principal">Saltar al contenido</a>
+
+<!-- ============ cabecera fija (desde que se abre la puerta): el logo real (sin redibujar), las paradas y el teléfono.
+     Sobre piedra y almagre cambia de tinta (main.js pone data-sup) y el logo va sobre una etiqueta de papel ============ -->
+<header class="cab" id="cab" data-sup="papel">
+  <div class="cab__in">
+    <a class="marca" href="./"><img class="marca__logo" src="marca/logo-160.png" srcset="marca/logo-160.png 2x, marca/logo-240.png 3x" width="84" height="61" alt="Aldea Rural A Cortiña, a la portada"></a>
+    <nav class="cab__nav" aria-label="Principal">
+      <a href="#aldea">La aldea</a>
+      <a href="#dentro">Por dentro</a>
+      <a href="#fuera">Fuera</a>
+      <a href="#barra">La barra</a>
+      <a href="#alrededor">Alrededor</a>
+    </nav>
+    <a class="cab__tel" href="tel:+34645263522"><span class="vh">Teléfono: </span>645 263 522</a>
+    <a class="btn btn--marca cab__res" href="#reservar">Elegir llave</a>
+    <button class="cab__menu" id="menu-btn" type="button" aria-expanded="false" aria-controls="menu-movil"><span class="vh">Menú</span><i></i><i></i></button>
+  </div>
+  <div class="menu-movil" id="menu-movil" aria-hidden="true">
+    <nav aria-label="Menú">
+      <a href="#aldea"><small>Una casa y dos apartamentos</small>La aldea</a>
+      <a href="#dentro"><small>Casa, apartamento 1 y apartamento 2</small>Por dentro</a>
+      <a href="#fuera"><small>Piscina, cenador y sala de juegos</small>Fuera</a>
+      <a href="#barra"><small>Burguer Rural, para llevar</small>La barra</a>
+      <a href="#alrededor"><small>Verín, Monterrei, Laza</small>Alrededor</a>
+      <a href="#reservar"><small>Casa, apartamentos o la aldea entera</small>Elegir llave</a>
+      <a href="#llegar"><small>Pepín · Castrelo do Val</small>Cómo llegar</a>
+    </nav>
+    <p class="menu-movil__tel"><a href="tel:+34645263522">645 263 522</a> · <a href="tel:+34988419215">988 41 92 15</a></p>
+  </div>
+</header>

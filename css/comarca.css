@@ -1,0 +1,190 @@
+/* Aldea Rural A Cortiña · módulos «Cuándo venir» (js/comarca.js) y «La barra» (js/barra.js)
+   Todo bajo [data-modulo="comarca"] y [data-modulo="barra"]. Usa los tokens y las letras de la web
+   (css/estilos.css) con respaldo, y las superficies sup-papel | sup-almagre de su <section>:
+   --texto --texto-2 --acento --linea --btn-f --btn-t --foco --marco.
+   Los dibujos van siempre con la tinta del logo (#1F1A17) sobre su propio papel o sobre la superficie. */
+
+[data-modulo="comarca"],
+[data-modulo="barra"] { position: relative; }
+
+/* =========================================================
+   CUÁNDO VENIR
+   ========================================================= */
+[data-modulo="comarca"] {
+  --cm-cab: var(--cab, 72px);
+  --cm-tinta: #1F1A17;
+  --cm-linea: var(--linea, rgba(31, 26, 23, .24));
+  --cm-recorrido: 92svh;
+  color: var(--texto, #1F1A17);
+}
+
+/* ---------- lo común de cada época ---------- */
+[data-modulo="comarca"] .cm-ep { position: relative; }
+[data-modulo="comarca"] .cm-mes {
+  margin: 0 0 8px; font: 400 .74rem/1.4 var(--f-mono, 'Overpass Mono', ui-monospace, monospace);
+  letter-spacing: .2em; text-transform: uppercase; color: var(--acento, #892C28);
+}
+[data-modulo="comarca"] .cm-titulo {
+  margin: 0; font: 400 clamp(1.7rem, 3.2vw, 2.7rem)/1.06 var(--f-tit, 'Ibarra Real Nova', Georgia, serif); letter-spacing: -.005em; text-wrap: balance;
+}
+[data-modulo="comarca"] .cm-txt, [data-modulo="comarca"] .cm-intro { margin: 0; color: var(--texto-2, #4E4540); max-width: 38rem; }
+[data-modulo="comarca"] .cm-accion { margin: 20px 0 0; }
+[data-modulo="comarca"] .cm-boton {
+  display: inline-flex; align-items: center; min-height: 48px; padding: 11px 22px; border: 1.5px solid currentColor; border-radius: 2px;
+  background: transparent; color: var(--texto, #1F1A17); font: 600 .96rem/1.1 var(--f-txt, system-ui, sans-serif); letter-spacing: .01em; text-decoration: none;
+  transition: background-color .3s, color .3s;
+}
+[data-modulo="comarca"] .cm-boton:hover { background: color-mix(in srgb, currentColor 9%, transparent); }
+[data-modulo="comarca"] .cm-boton:active { transform: translateY(1px); }
+[data-modulo="comarca"] .cm-boton:focus-visible { outline: 2px solid var(--foco, #1F1A17); outline-offset: 4px; }
+
+/* ---------- febrero: las máscaras ---------- */
+[data-modulo="comarca"] .cm-ent { padding-top: 22px; border-top: 2px solid var(--texto, #1F1A17); }
+[data-modulo="comarca"] .cm-ent-escena { display: grid; gap: clamp(14px, 2.4vw, 28px); align-content: start; }
+[data-modulo="comarca"] .cm-cab { display: grid; gap: 0; }
+[data-modulo="comarca"] .cm-intro { margin-top: 14px; font-size: 1rem; }
+
+[data-modulo="comarca"] .cm-mascaras {
+  --mk: min(34vw, 340px);
+  display: grid; grid-template-columns: minmax(0, 1fr) var(--mk) var(--mk) minmax(0, 1fr);
+  align-items: end; gap: 0 clamp(4px, 1vw, 14px);
+}
+[data-modulo="comarca"] .cm-mk { display: contents; margin: 0; }
+[data-modulo="comarca"] .cm-mk-lienzo { align-self: end; width: 100%; aspect-ratio: 500 / 716; }
+[data-modulo="comarca"] .cm-mk--cigarron .cm-mk-lienzo { grid-column: 2; grid-row: 1; }
+[data-modulo="comarca"] .cm-mk--peliqueiro .cm-mk-lienzo { grid-column: 3; grid-row: 1; }
+[data-modulo="comarca"] .cm-mk-lienzo svg { display: block; width: 100%; height: 100%; overflow: visible; }
+[data-modulo="comarca"] .cm-mk figcaption { display: grid; gap: 6px; align-content: end; padding-bottom: clamp(8px, 4vw, 56px); }
+[data-modulo="comarca"] .cm-mk--cigarron figcaption { grid-column: 1; grid-row: 1; padding-right: clamp(10px, 2vw, 32px); text-align: right; justify-items: end; }
+[data-modulo="comarca"] .cm-mk--peliqueiro figcaption { grid-column: 4; grid-row: 1; padding-left: clamp(10px, 2vw, 32px); }
+[data-modulo="comarca"] .cm-mk-nom { font: 400 clamp(1.4rem, 2.2vw, 1.9rem)/1.05 var(--f-tit, 'Ibarra Real Nova', Georgia, serif); }
+[data-modulo="comarca"] .cm-mk-donde { font: 400 .74rem/1.4 var(--f-mono, 'Overpass Mono', ui-monospace, monospace); letter-spacing: .12em; text-transform: uppercase; color: var(--acento, #892C28); }
+[data-modulo="comarca"] .cm-mk-txt { font-size: .93rem; line-height: 1.5; color: var(--texto-2, #4E4540); max-width: 24rem; }
+[data-modulo="comarca"] .cm-mk-nota { font-size: .82rem; line-height: 1.45; color: var(--texto-2, #4E4540); max-width: 24rem; padding-top: 6px; border-top: 1px solid var(--cm-linea); }
+[data-modulo="comarca"] .cm-mk--cigarron .cm-mk-nota { text-align: right; }
+
+/* con movimiento y pantalla grande: la escena se queda fijada mientras las máscaras giran */
+[data-modulo="comarca"] .cm--fijo .cm-ent-pista { height: calc(100svh - var(--cm-cab) + var(--cm-recorrido)); }
+[data-modulo="comarca"] .cm--fijo .cm-ent-escena {
+  position: sticky; top: var(--cm-cab); height: calc(100svh - var(--cm-cab)); padding-block: 14px 10px; align-content: center;
+}
+[data-modulo="comarca"] .cm--fijo .cm-mascaras { --mk: min(34vw, 340px, calc((100svh - var(--cm-cab) - 230px) * .698)); }
+
+@media (max-width: 1199px) {
+  [data-modulo="comarca"] .cm--fijo .cm-mascaras { --mk: min(30vw, 340px, calc((100svh - var(--cm-cab) - 285px) * .698)); }
+  [data-modulo="comarca"] .cm--fijo .cm-intro { font-size: .94rem; line-height: 1.5; }
+  [data-modulo="comarca"] .cm--fijo .cm-mk-txt { font-size: .88rem; }
+}
+
+/* el Maragato: una ficha de texto (no hay dibujo: ver img/comarca/FUENTES.md) */
+[data-modulo="comarca"] .cm-maragato {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 8px clamp(20px, 4vw, 64px); align-items: start;
+  margin-top: clamp(28px, 4vw, 56px); padding: 22px 0 0; border-top: 1px solid var(--cm-linea);
+}
+[data-modulo="comarca"] .cm-mar-tit { grid-column: 1; margin: 0; font: 400 clamp(1.4rem, 2.2vw, 1.9rem)/1.1 var(--f-tit, 'Ibarra Real Nova', Georgia, serif); display: grid; gap: 4px; }
+[data-modulo="comarca"] .cm-mar-tit span { font: 400 .74rem/1.4 var(--f-mono, 'Overpass Mono', ui-monospace, monospace); letter-spacing: .12em; text-transform: uppercase; color: var(--acento, #892C28); }
+[data-modulo="comarca"] .cm-maragato p { grid-column: 2; margin: 0; color: var(--texto-2, #4E4540); max-width: 38rem; }
+[data-modulo="comarca"] .cm-maragato .cm-mar-fecha { font: 400 .8rem/1.4 var(--f-mono, 'Overpass Mono', ui-monospace, monospace); letter-spacing: .06em; color: var(--texto, #1F1A17); }
+[data-modulo="comarca"] .cm-pie-dib { margin: 22px 0 0; font: 400 .74rem/1.5 var(--f-mono, 'Overpass Mono', ui-monospace, monospace); letter-spacing: .04em; color: var(--texto-2, #4E4540); }
+
+/* ---------- primavera, verano y otoño ---------- */
+[data-modulo="comarca"] .cm-estaciones {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(32px, 4vw, 56px) clamp(24px, 3.4vw, 52px);
+  margin-top: clamp(56px, 8vw, 110px);
+}
+[data-modulo="comarca"] .cm-est { display: grid; gap: 0; align-content: start; padding-top: 18px; border-top: 2px solid var(--texto, #1F1A17); }
+[data-modulo="comarca"] .cm-est .cm-titulo { margin-bottom: 12px; }
+[data-modulo="comarca"] .cm-dib { position: relative; margin: 0 0 18px; aspect-ratio: 4 / 3; }
+[data-modulo="comarca"] .cm-dib-svg { position: absolute; inset: 0; }
+[data-modulo="comarca"] .cm-dib-svg svg { display: block; width: 100%; height: 100%; overflow: visible; }
+/* el racimo va en el cielo, arriba a la derecha del castillo (ahí el dibujo no tiene nada) */
+[data-modulo="comarca"] .cm-dib-svg--racimo { inset: 0 0 auto auto; width: 36%; height: auto; aspect-ratio: 4 / 3; }
+[data-modulo="comarca"] .cm-foto { margin: 16px 0 0; border: 1px solid var(--marco, rgba(31, 26, 23, .6)); padding: 4px; }
+[data-modulo="comarca"] .cm-foto img { width: 100%; height: auto; }
+[data-modulo="comarca"] .cm-est .cm-accion { margin-top: 18px; }
+
+@media (max-width: 1099px) {
+  [data-modulo="comarca"] .cm-estaciones { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  [data-modulo="comarca"] .cm-est--otono { grid-column: 1 / -1; }
+  [data-modulo="comarca"] .cm-est--otono .cm-dib { max-width: 560px; }
+}
+@media (max-width: 899px) {
+  /* móvil y tablet: las dos máscaras juntas, una frente a otra, y el texto debajo */
+  [data-modulo="comarca"] .cm-mascaras { --mk: 1fr; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 4px; }
+  [data-modulo="comarca"] .cm-mascaras { align-items: start; }
+  [data-modulo="comarca"] .cm-mk--cigarron .cm-mk-lienzo { grid-column: 1; grid-row: 1; }
+  [data-modulo="comarca"] .cm-mk--peliqueiro .cm-mk-lienzo { grid-column: 2; grid-row: 1; }
+  [data-modulo="comarca"] .cm-mk--cigarron figcaption { grid-column: 1 / -1; grid-row: 2; text-align: left; justify-items: start; padding: 18px 0 0; }
+  [data-modulo="comarca"] .cm-mk--peliqueiro figcaption { grid-column: 1 / -1; grid-row: 3; padding: 22px 0 0; }
+  [data-modulo="comarca"] .cm-mk--cigarron .cm-mk-nota { text-align: left; }
+  [data-modulo="comarca"] .cm-maragato { grid-template-columns: 1fr; }
+  [data-modulo="comarca"] .cm-maragato p, [data-modulo="comarca"] .cm-mar-tit { grid-column: 1; }
+}
+@media (max-width: 699px) {
+  [data-modulo="comarca"] .cm-estaciones { grid-template-columns: 1fr; }
+  [data-modulo="comarca"] .cm-est--otono { grid-column: auto; }
+}
+
+/* =========================================================
+   LA BARRA (superficie almagre)
+   ========================================================= */
+[data-modulo="barra"] {
+  --br-cab: var(--cab, 72px);
+  --br-recorrido: 96svh;
+  color: var(--texto, #F4EFE6);
+}
+[data-modulo="barra"] .br-escena {
+  display: grid; grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr); gap: clamp(28px, 5vw, 88px); align-items: center;
+}
+[data-modulo="barra"] .br-texto { display: grid; gap: 16px; align-content: center; justify-items: start; max-width: 34rem; }
+[data-modulo="barra"] .br-logo { margin: 0; width: min(380px, 100%); }
+[data-modulo="barra"] .br-logo img { width: 100%; height: auto; }
+[data-modulo="barra"] .br-frase { margin: 0; font: 400 clamp(1.5rem, 2.5vw, 2.2rem)/1.18 var(--f-tit, 'Ibarra Real Nova', Georgia, serif); text-wrap: balance; }
+[data-modulo="barra"] .br-cartas {
+  display: flex; flex-wrap: wrap; gap: 6px 0; margin: 0; padding: 0; list-style: none;
+  font: 400 .78rem/1.3 var(--f-mono, 'Overpass Mono', ui-monospace, monospace); letter-spacing: .12em; text-transform: uppercase;
+}
+[data-modulo="barra"] .br-cartas li { display: inline-flex; align-items: baseline; gap: .5em; }
+[data-modulo="barra"] .br-cartas li + li::before { content: ""; width: 5px; height: 5px; margin: 0 1em; align-self: center; background: currentColor; opacity: .75; transform: rotate(45deg); }
+[data-modulo="barra"] .br-num { opacity: .7; }
+[data-modulo="barra"] .br-nota { margin: 0; font-size: .92rem; line-height: 1.5; color: var(--texto-2, #E9D4CB); max-width: 30rem; }
+[data-modulo="barra"] .br-llamar { margin: 6px 0 0; }
+[data-modulo="barra"] .br-boton {
+  display: inline-flex; align-items: center; gap: .9em; min-height: 52px; padding: 12px 24px; border: 1.5px solid transparent; border-radius: 2px;
+  background: var(--btn-f, #F4EFE6); color: var(--btn-t, #7A2320); font: 600 1rem/1.1 var(--f-txt, system-ui, sans-serif); letter-spacing: .01em; text-decoration: none;
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, .14); transition: filter .3s;
+}
+[data-modulo="barra"] .br-boton:hover { filter: brightness(1.06); }
+[data-modulo="barra"] .br-boton:active { transform: translateY(1px); }
+[data-modulo="barra"] .br-boton:focus-visible { outline: 2px solid var(--foco, #F4EFE6); outline-offset: 4px; }
+[data-modulo="barra"] .br-tel { font: 400 .92rem/1 var(--f-mono, 'Overpass Mono', ui-monospace, monospace); letter-spacing: .04em; }
+
+[data-modulo="barra"] .br, [data-modulo="comarca"] .cm { overflow-x: clip; }
+[data-modulo="barra"] .br-fig { position: relative; margin: 0; display: grid; gap: 14px; justify-items: center; }
+[data-modulo="barra"] .br-lienzo { width: min(100%, 640px); }
+[data-modulo="barra"] .br-lienzo svg { display: block; width: 100%; height: auto; overflow: visible; }
+[data-modulo="barra"] .br-lienzo .capa { transform-box: fill-box; transform-origin: 50% 100%; }
+[data-modulo="barra"] .br-fig figcaption { display: grid; gap: 2px; justify-items: center; text-align: center; }
+[data-modulo="barra"] .br-nombre { font: 400 clamp(1.3rem, 2vw, 1.7rem)/1.1 var(--f-tit, 'Ibarra Real Nova', Georgia, serif); }
+[data-modulo="barra"] .br-ilu { font: 400 .72rem/1.5 var(--f-mono, 'Overpass Mono', ui-monospace, monospace); letter-spacing: .06em; color: var(--texto-2, #E9D4CB); }
+/* el sello: un óvalo de papel con «XXL» en almagre hondo */
+[data-modulo="barra"] .br-xxl {
+  position: absolute; top: -2%; right: 2%; z-index: 2; padding: .08em .5em .14em; border: 3px double #7A2320; border-radius: 50% / 46%;
+  background: #F4EFE6; color: #7A2320; font: italic 600 clamp(2.2rem, 5.4vw, 4rem)/1 var(--f-tit, 'Ibarra Real Nova', Georgia, serif); letter-spacing: .02em;
+  transform: rotate(-8deg); transform-origin: 50% 50%; pointer-events: none; box-shadow: 0 0 0 4px rgba(244, 239, 230, .22);
+}
+/* con movimiento y pantalla grande: la escena se queda fijada mientras la hamburguesa se monta */
+[data-modulo="barra"] .br--fijo .br-pista { height: calc(100svh - var(--br-cab) + var(--br-recorrido)); }
+[data-modulo="barra"] .br--fijo .br-escena { position: sticky; top: var(--br-cab); height: calc(100svh - var(--br-cab)); }
+[data-modulo="barra"] .br--fijo .br-logo { width: min(330px, 100%, calc((100svh - var(--br-cab)) * .42)); }
+/* sin movimiento nada se esconde: la hamburguesa montada y el sello puesto */
+[data-modulo="barra"] .br--quieto .br-xxl { opacity: 1; }
+@media (max-width: 899px) {
+  [data-modulo="barra"] .br-escena { grid-template-columns: 1fr; gap: 36px; }
+  [data-modulo="barra"] .br-texto { max-width: none; }
+  [data-modulo="barra"] .br-logo { width: min(300px, 78%); }
+  [data-modulo="barra"] .br-xxl { top: -6%; right: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-modulo="comarca"] .cm-boton, [data-modulo="barra"] .br-boton { transition: none; }
+}

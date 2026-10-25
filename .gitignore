@@ -1,0 +1,9 @@
+# solo en local: material de origen (fotos originales, páginas copiadas de portales), pruebas y notas internas
+ref/
+pruebas/
+node_modules/
+PENDIENTES.md
+ENCARGO.md
+# descargas del IGN para el 3D (~28 MB), ya dentro de pruebas/
+pruebas/3d-fuente/
+scripts/fuentes/

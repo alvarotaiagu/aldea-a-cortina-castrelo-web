@@ -1,0 +1,363 @@
+[
+ {
+  "nombre": "casa-fachada",
+  "anchos": [
+   480,
+   800,
+   1024,
+   1280,
+   1600,
+   1920
+  ],
+  "ancho": 1920,
+  "alto": 1440,
+  "origen": "fotos/web/aldear-rural-a-cortinha-49.jpg",
+  "recorte": null
+ },
+ {
+  "nombre": "solaina",
+  "anchos": [
+   480,
+   800,
+   1024,
+   1280,
+   1600
+  ],
+  "ancho": 1600,
+  "alto": 1200,
+  "origen": "fotos/web/aldear-rural-a-cortinha-18.jpg",
+  "recorte": null
+ },
+ {
+  "nombre": "cenador",
+  "anchos": [
+   480,
+   800,
+   1024,
+   1280,
+   1600,
+   1920
+  ],
+  "ancho": 1920,
+  "alto": 1440,
+  "origen": "fotos/web/aldear-rural-a-cortinha-62.jpg",
+  "recorte": null
+ },
+ {
+  "nombre": "cenador-mesas",
+  "anchos": [
+   480,
+   800,
+   1024,
+   1280,
+   1600
+  ],
+  "ancho": 1600,
+  "alto": 1200,
+  "origen": "fotos/web/aldear-rural-a-cortinha-61.jpg",
+  "recorte": null
+ },
+ {
+  "nombre": "vista-aldea",
+  "anchos": [
+   480,
+   800,
+   1024,
+   1280,
+   1600,
+   1920
+  ],
+  "ancho": 1920,
+  "alto": 1440,
+  "origen": "fotos/web/aldear-rural-a-cortinha-38.jpg",
+  "recorte": null
+ },
+ {
+  "nombre": "piscina",
+  "anchos": [
+   480,
+   800,
+   1024,
+   1280,
+   1600,
+   1920
+  ],
+  "ancho": 1920,
+  "alto": 1440,
+  "origen": "fotos/web/aldear-rural-a-cortinha-43.jpg",
+  "recorte": null
+ },
+ {
+  "nombre": "sala-juegos",
+  "anchos": [
+   480,
+   800,
+   1024,
+   1280,
+   1600
+  ],
+  "ancho": 1600,
+  "alto": 1200,
+  "origen": "fotos/web/aldear-rural-a-cortinha-59.jpg",
+  "recorte": null
+ },
+ {
+  "nombre": "sala-billar",
+  "anchos": [
+   480,
+   800,
+   1024,
+   1280,
+   1600
+  ],
+  "ancho": 1600,
+  "alto": 1200,
+  "origen": "fotos/web/aldear-rural-a-cortinha-56.jpg",
+  "recorte": null
+ },
+ {
+  "nombre": "casa-salon",
+  "anchos": [
+   480,
+   800,
+   1024,
+   1280,
+   1600
+  ],
+  "ancho": 1600,
+  "alto": 1200,
+  "origen": "fotos/web/aldear-rural-a-cortinha-64.jpg",
+  "recorte": null
+ },
+ {
+  "nombre": "casa-dormitorio-1",
+  "anchos": [
+   480,
+   800,
+   1024,
+   1280,
+   1600
+  ],
+  "ancho": 1600,
+  "alto": 1200,
+  "origen": "fotos/web/aldear-rural-a-cortinha-70.jpg",
+  "recorte": null
+ },
+ {
+  "nombre": "casa-dormitorio-2",
+  "anchos": [
+   480,
+   800,
+   1024,
+   1280,
+   1600
+  ],
+  "ancho": 1600,
+  "alto": 1200,
+  "origen": "fotos/web/aldear-rural-a-cortinha-7.jpg",
+  "recorte": null
+ },
+ {
+  "nombre": "casa-dormitorio-3",
+  "anchos": [
+   480,
+   800,
+   1024,
+   1280,
+   1600
+  ],
+  "ancho": 1600,
+  "alto": 1200,
+  "origen": "fotos/web/aldear-rural-a-cortinha-2.jpg",
+  "recorte": null
+ },
+ {
+  "nombre": "casa-dormitorio-4",
+  "anchos": [
+   480,
+   800,
+   1024,
+   1280,
+   1600
+  ],
+  "ancho": 1600,
+  "alto": 1200,
+  "origen": "fotos/web/aldear-rural-a-cortinha-1.jpg",
+  "recorte": null
+ },
+ {
+  "nombre": "casa-bano",
+  "anchos": [
+   480,
+   800,
+   1024,
+   1280
+  ],
+  "ancho": 1280,
+  "alto": 960,
+  "origen": "fotos/web/aldear-rural-a-cortinha-9.jpg",
+  "recorte": null
+ },
+ {
+  "nombre": "apto1-salon",
+  "anchos": [
+   480,
+   800,
+   1024,
+   1280,
+   1600
+  ],
+  "ancho": 1600,
+  "alto": 1200,
+  "origen": "fotos/web/aldear-rural-a-cortinha-12.jpg",
+  "recorte": null
+ },
+ {
+  "nombre": "apto1-cocina",
+  "anchos": [
+   480,
+   800,
+   1024,
+   1280,
+   1600
+  ],
+  "ancho": 1600,
+  "alto": 1200,
+  "origen": "fotos/web/aldear-rural-a-cortinha-13.jpg",
+  "recorte": null
+ },
+ {
+  "nombre": "apto1-dormitorio",
+  "anchos": [
+   480,
+   800,
+   1024,
+   1280,
+   1600
+  ],
+  "ancho": 1600,
+  "alto": 1200,
+  "origen": "fotos/web/aldear-rural-a-cortinha-14.jpg",
+  "recorte": null
+ },
+ {
+  "nombre": "apto1-dormitorio-2",
+  "anchos": [
+   480,
+   800,
+   1024,
+   1280,
+   1600
+  ],
+  "ancho": 1600,
+  "alto": 1200,
+  "origen": "fotos/web/aldear-rural-a-cortinha-15.jpg",
+  "recorte": null
+ },
+ {
+  "nombre": "apto1-bano",
+  "anchos": [
+   480,
+   800,
+   1024,
+   1280
+  ],
+  "ancho": 1280,
+  "alto": 960,
+  "origen": "fotos/web/aldear-rural-a-cortinha-16.jpg",
+  "recorte": null
+ },
+ {
+  "nombre": "ventana-granito",
+  "anchos": [
+   480,
+   800,
+   900
+  ],
+  "ancho": 900,
+  "alto": 675,
+  "origen": "fotos/web/aldear-rural-a-cortinha-17.jpg",
+  "recorte": null
+ },
+ {
+  "nombre": "apto2-dormitorio",
+  "anchos": [
+   480,
+   800,
+   1024,
+   1280,
+   1600
+  ],
+  "ancho": 1600,
+  "alto": 1200,
+  "origen": "fotos/web/aldear-rural-a-cortinha-21.jpg",
+  "recorte": null
+ },
+ {
+  "nombre": "apto2-dormitorio-2",
+  "anchos": [
+   480,
+   800,
+   1024,
+   1280,
+   1600
+  ],
+  "ancho": 1600,
+  "alto": 1200,
+  "origen": "fotos/web/aldear-rural-a-cortinha-23.jpg",
+  "recorte": null
+ },
+ {
+  "nombre": "apto2-bano",
+  "anchos": [
+   480,
+   800,
+   1024,
+   1280
+  ],
+  "ancho": 1280,
+  "alto": 960,
+  "origen": "fotos/web/aldear-rural-a-cortinha-22.jpg",
+  "recorte": null
+ },
+ {
+  "nombre": "apto2-salon",
+  "anchos": [
+   480,
+   800,
+   1024,
+   1280,
+   1600
+  ],
+  "ancho": 1600,
+  "alto": 1200,
+  "origen": "fotos/web/aldear-rural-a-cortinha-24.jpg",
+  "recorte": null
+ },
+ {
+  "nombre": "apto2-cocina",
+  "anchos": [
+   480,
+   800,
+   1024,
+   1280,
+   1600
+  ],
+  "ancho": 1600,
+  "alto": 1200,
+  "origen": "fotos/web/aldear-rural-a-cortinha-27.jpg",
+  "recorte": null
+ },
+ {
+  "nombre": "llave",
+  "anchos": [
+   480,
+   800,
+   900
+  ],
+  "ancho": 900,
+  "alto": 600,
+  "origen": "fotos/web/alojamiento-pepin-verin.jpg",
+  "recorte": null
+ }
+]
