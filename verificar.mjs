@@ -617,6 +617,28 @@ try {
       if (!ok) ciegos.push(id);
     }
     comprobar(ids.length > 5 && ciegos.length === 0, `móvil 390: los ${ids.length} titulares se escriben al llegar`, ciegos);
+    // «Elige tu llave»: cada dibujo cabe en su caja y no pisa el nombre (la fila «auto» dejaba la llave a tamaño natural)
+    await page.evaluate(() => document.querySelector('.llaves').scrollIntoView({ block: 'center' }));
+    await page.waitForTimeout(300);
+    const llaves = await page.evaluate(() => [...document.querySelectorAll('.llave')].map((l) => {
+      const caja = l.querySelector('.llave__dib').getBoundingClientRect(), dib = l.querySelector('.llave__dib > *').getBoundingClientRect(), nom = l.querySelector('.llave__nom').getBoundingClientRect();
+      return { dibAlto: Math.round(dib.height), cajaAlto: Math.round(caja.height), pisa: dib.bottom > nom.top + 1, sale: dib.bottom > caja.bottom + 1 || dib.right > l.getBoundingClientRect().right + 1 };
+    }));
+    comprobar(llaves.length === 4 && llaves.every((k) => !k.pisa && !k.sale && k.dibAlto <= k.cajaAlto + 1), 'móvil 390: las cuatro llaves caben en su caja y no pisan el nombre', llaves);
+    // el visor: los botones de abajo reciben el toque en todo su alto (el contador, de lado a lado, tapaba la mitad de abajo)
+    await page.evaluate(() => document.querySelector('#dentro .foto-btn').scrollIntoView({ block: 'center' }));
+    await page.locator('#dentro .foto-btn').first().click();
+    await page.waitForFunction(() => document.querySelector('.visor[open]'), null, { timeout: 4000 }).catch(() => {});
+    const toque = await page.evaluate(() => {
+      const b = document.querySelector('.visor__btn--sig'), r = b.getBoundingClientRect(), x = r.left + r.width / 2;
+      return [0.25, 0.5, 0.75, 0.9].map((f) => { const e = document.elementFromPoint(x, r.top + r.height * f); return !!(e && e.closest('.visor__btn--sig')); });
+    });
+    const antes = await page.evaluate(() => document.querySelector('.visor__n').textContent);
+    const b = await page.locator('.visor__btn--sig').boundingBox();
+    await page.touchscreen.tap(b.x + b.width / 2, b.y + b.height * 0.8);
+    await page.waitForTimeout(250);
+    const despues = await page.evaluate(() => document.querySelector('.visor__n').textContent);
+    comprobar(toque.every(Boolean) && antes !== despues, `móvil 390: «siguiente» del visor responde en todo su alto (tocado abajo: ${antes} → ${despues})`, toque);
     await ctx.close();
   }
   {
