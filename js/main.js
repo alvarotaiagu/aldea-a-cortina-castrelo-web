@@ -177,6 +177,8 @@
     fuera = true;
     const c = $('#cortina, .cortina, [data-cortina]');
     if (c && !c.hidden && getComputedStyle(c).display !== 'none') c.hidden = true;
+    // con la cortina el scroll estaba bloqueado: si algo movió la página (restauración del navegador), se vuelve arriba
+    if (!location.hash && scrollY > 0) { if (lenis) lenis.scrollTo(0, { immediate: true, force: true }); scrollTo(0, 0); }
     if (lenis) lenis.start();
     if (G) G.ticker.lagSmoothing(0);      // al retirar la cortina, nunca antes
     if (ST) ST.refresh();

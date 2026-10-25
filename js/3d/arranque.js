@@ -11,7 +11,7 @@
 // Mientras carga, el «póster» es el propio plano de tinta (img/terreno/plano.*, generado por scripts/terreno.py): no se pinta WebGL
 // para hacer ninguna imagen.
 // VERSION: súbela al cambiar cualquier fichero de js/3d/ o img/terreno/ (todo lo que se pide desde aquí lleva ?v=VERSION).
-const VERSION = '2026-10-25.2', V = '?v=' + VERSION;
+const VERSION = '2026-10-25.3', V = '?v=' + VERSION;
 const IMG = new URL('../../img/terreno/', import.meta.url).href;
 const Cortina = (window.Cortina = window.Cortina || {});
 const $ = id => document.getElementById(id);

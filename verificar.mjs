@@ -572,6 +572,16 @@ try {
     comprobar(await page.evaluate(() => document.getElementById('portada').classList.contains('abierta') && document.documentElement.classList.contains('con-movimiento')), 'la cortina se retira y la portada se abre (alAbrirse llega)');
     await page.waitForFunction(() => !document.getElementById('cortina') || getComputedStyle(document.getElementById('cortina')).display === 'none', null, { timeout: 9000 }).catch(() => {});
     comprobar(await page.evaluate(() => !document.getElementById('cortina') || getComputedStyle(document.getElementById('cortina')).display === 'none'), 'la cortina desaparece de verdad');
+    // recargar a media página: se entra arriba, no a mitad del viaje por el dibujo (Chrome restauraba el scroll)
+    await page.mouse.move(640, 400);
+    for (let i = 0; i < 12; i++) { await page.mouse.wheel(0, 300); await page.waitForTimeout(40); }
+    await page.waitForFunction(() => scrollY > 1500, null, { timeout: 5000 }).catch(() => {});
+    const bajada = await page.evaluate(() => Math.round(scrollY));
+    await page.reload();
+    await page.waitForFunction(() => !document.getElementById('cortina') || getComputedStyle(document.getElementById('cortina')).display === 'none', null, { timeout: 9000 }).catch(() => {});
+    await page.waitForTimeout(300);
+    const trasRecargar = await page.evaluate(() => ({ y: Math.round(scrollY), rest: history.scrollRestoration }));
+    comprobar(bajada > 1500 && trasRecargar.y === 0 && trasRecargar.rest === 'manual', `al recargar a media página se entra arriba (estaba en ${bajada} px; tras recargar, ${trasRecargar.y} px)`, JSON.stringify(trasRecargar));
     if (HAY.dibujo) comprobar(await page.waitForFunction(() => document.querySelector('#portada [data-modulo="dibujo"]').dataset.montado === '1', null, { timeout: 6000 }).then(() => true, () => false), 'el dibujo de la portada se monta al abrirse la cortina');
     // titulares: se escriben al llegar
     await page.evaluate(() => document.querySelector('#t-fuera').scrollIntoView({ block: 'center' }));

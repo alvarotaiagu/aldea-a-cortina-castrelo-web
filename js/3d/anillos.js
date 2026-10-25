@@ -272,7 +272,12 @@ export function montarAnillos(motor, { movimiento, quieto, alPrimerFotograma, ba
   return {
     vista, camara, ctl, anillos, rutas,
     get modo() { return modo; }, get progreso() { return pv; }, get fase() { return F; },
-    ponerProgreso(v, deGolpe) { p = quieto ? 1 : clamp(v); if (deGolpe || !movimiento) pv = p; motor.pedir(); },
+    ponerProgreso(v, deGolpe) {
+      const nuevo = quieto ? 1 : clamp(v);
+      // con el mapa suelto, hacer scroll devuelve la cámara al recorrido (si no, se bajaba la pista sin que nada se moviera)
+      if (modo === 'libre' && !quieto && !moviendo && Math.abs(nuevo - p) > .002) volver();
+      p = nuevo; if (deGolpe || !movimiento) pv = p; motor.pedir();
+    },
     soltar, volver, poses: () => P.poses,
     destruir() {
       ctl.dispose();
