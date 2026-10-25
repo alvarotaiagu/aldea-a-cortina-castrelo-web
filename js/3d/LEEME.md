@@ -59,7 +59,7 @@ No repite el recorrido del grano de Tulla (hilo que sigue una carretera con la c
 - **Con movimiento y densidad «aldea»:** la pista se fija y el scroll es el recorrido (0–5 % la aldea de cerca con su anillo de 0,5 km; luego Castrelo, Verín, Monterrei y Laza, cada una con su parada quieta; 87–97 % el viaje a la vista de todo). La tabla (abajo a la izquierda; abajo a lo ancho en el móvil) da los minutos del sitio, los km por carretera y en línea recta, y marca la fila activa. Mientras carga, el «póster» es el propio plano de tinta (no se pinta WebGL para hacerlo).
 - **Movimiento reducido o «sobria»:** no se fija; el marco se queda quieto con todo dibujado, la vista de todo y el explorador.
 - **Explorador:** arrastrar con el ratón suelta el mapa (gira; botón derecho mueve); Ctrl + rueda o el pellizco del trackpad acercan (la rueda sola sigue siendo el scroll de la página); en táctil, «Mover el mapa» (y dos dedos acercan); teclado en el lienzo: flechas, + y −, Escape. «Volver al recorrido» lo devuelve al scroll.
-- **Plano:** sin WebGL2, con ahorro de datos, con `?sin-3d` (u `opciones.gl === false`) o con el botón «En plano». Mismo guion, mismos rótulos, en 2D.
+- **Plano (por defecto desde 2026-10-25, a petición de Álvaro: el 3D no iba del todo fluido):** siempre al llegar; el 3D solo se descarga al pulsar «En 3D» o con `?en-3d`. Sin WebGL2, con ahorro de datos, con `?sin-3d` (u `opciones.gl === false`) los botones se van y queda solo el plano. Mismo guion, mismos rótulos, en 2D.
 - **Foco del teclado:** contorno de 2 px de tinta sobre un halo de papel y un rayado corto de plumilla debajo, en botones y en el lienzo.
 
 ## Cómo se regenera
@@ -75,7 +75,7 @@ Para retocar: `PARADAS` y `ANILLO_P` en `guion.js` (cuándo para la cámara y cu
 
 ## Rendimiento
 
-- Nada pesado antes de `load` + un rato libre + la cortina. `arranque.js` pesa 12 KB; `guion.js`, `sol.js` y `terreno.json` (23 KB), al montar; Three.js (166 KB gzip) y los datos, solo con WebGL2.
+- Nada pesado antes de `load` + un rato libre + la cortina. `arranque.js` pesa 12 KB; `guion.js`, `sol.js` y `terreno.json` (23 KB), al montar; Three.js (166 KB gzip) y los datos, solo al pulsar «En 3D» y con WebGL2.
 - Móvil (`pointer: coarse` o pantalla < 700 px): malla 384×421, ortofoto 1536 (385 KB WebP), parches 1024 (191 + 214 KB), sombras 1024, densidad ≤ 1,5, sin antialias. Escritorio: 576×632, 3072 (1,4 MB), 1536 (402 + 457 KB), sombras 2048, densidad ≤ 1,75.
 - Pinta solo si se ve y algo se mueve; fuera de pantalla, con la pestaña oculta o en plano, nada. La luz se rehace cada minuto.
 - Calidad automática (media de 45 fotogramas > 30 ms): densidad −0,25 hasta 1 → sin sombras → densidad 0,75.

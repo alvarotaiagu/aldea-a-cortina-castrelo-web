@@ -40,7 +40,7 @@ Cada `<section>` lleva su clase y `data-sup`; la hoja define en cada superficie 
 | 4 | **Por dentro** | Web | Tres pestañas accesibles (flechas, Inicio, Fin) con galería, lista de lo que tiene cada una y «Elegir esta llave». Visor por nombre. |
 | 5 | **Fuera** (piedra) | Web | Piscina (abre en julio y agosto), cenador y barbacoa, vista a Pepín, sala de juegos, wifi y aparcamiento. |
 | 6 | **La barra** (almagre) | Comarca | El logo de Burguer Rural tal cual, las cinco categorías y la XXL que se monta. Respaldo web: logo, frase, categorías y «Llamar para pedir». |
-| 7 | **Alrededor** (piedra) | Ruta | El 3D del IGN con el cielo de ahora y anillos de tinta; respaldo: plano 2D y distancias. **Nunca de portada.** |
+| 7 | **Alrededor** (piedra) | Ruta | **Arranca en el plano 2D** de tinta con los anillos (fluido en cualquier equipo); el 3D del IGN con el cielo de ahora solo se descarga al pulsar «En 3D» (o con `?en-3d`). Respaldo: plano 2D y distancias. **Nunca de portada.** |
 | 8 | **Cuándo venir** (papel) | Comarca | Entroido (máscaras), primavera, verano, otoño. Respaldo web: las cuatro épocas en texto con «Ver fechas de …». |
 | 9 | **Lo que dicen** | Web | **4,6 en Google · 216 opiniones** y **9,5 en Booking · 66 opiniones**, la cita de José Luis M. (abril de 2026) y las cuatro etiquetas literales de Kayak. Enlace a Google. |
 | 10 | **Reservar «Elige tu llave»** (almagre) | Web | Motor de DEMOSTRACIÓN con cuatro llaves (ver abajo). |

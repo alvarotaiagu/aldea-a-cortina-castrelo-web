@@ -3,14 +3,15 @@
 // main.js lo monta al acercarse [data-modulo="ruta"]. Al montar:
 //   - mete delante del respaldo la pista fijada (sticky) con el marco, la tabla de minutos y los botones, y esconde la imagen
 //     del plano del respaldo (.ruta__plano o cualquier <img> de img/terreno/plano.*); la lista de distancias y la fuente se quedan;
-//   - con WebGL2 (y sin ahorro de datos ni ?sin-3d / opciones.gl === false) carga el 3D (escena.js + anillos.js), después de
-//     `load`, de un rato libre y de la cortina; si no, o si falla, el plano 2D (plano.js) en el mismo hueco;
+//   - arranca SIEMPRE en el plano 2D (plano.js), que es fluido en cualquier equipo; el 3D (escena.js + anillos.js) solo se
+//     descarga al pulsar «En 3D» (o al llegar con ?en-3d), y únicamente con WebGL2 (sin ahorro de datos ni ?sin-3d /
+//     opciones.gl === false); si no se puede o falla, los botones se van y queda el plano;
 //   - el scroll por la pista mueve los anillos y la cámara (progreso 0–1); con movimiento reducido o «sobria», la pista no se
 //     fija: el marco se queda quieto con todo dibujado y el explorador.
 // Mientras carga, el «póster» es el propio plano de tinta (img/terreno/plano.*, generado por scripts/terreno.py): no se pinta WebGL
 // para hacer ninguna imagen.
 // VERSION: súbela al cambiar cualquier fichero de js/3d/ o img/terreno/ (todo lo que se pide desde aquí lleva ?v=VERSION).
-const VERSION = '2026-10-25.1', V = '?v=' + VERSION;
+const VERSION = '2026-10-25.2', V = '?v=' + VERSION;
 const IMG = new URL('../../img/terreno/', import.meta.url).href;
 const Cortina = (window.Cortina = window.Cortina || {});
 const $ = id => document.getElementById(id);
@@ -47,10 +48,10 @@ const MARCADO = (quieto, poster) => `
       <div class="ruta-lienzo" id="ruta-lienzo"></div>
       <div class="ruta-rotulos" id="ruta-rotulos" aria-hidden="true"></div>
       <p class="ruta-chip" id="ruta-chip" hidden></p>
-      <p class="ruta-carga" id="ruta-carga" role="status">Cargando el relieve…</p>
+      <p class="ruta-carga" id="ruta-carga" role="status" hidden></p>
       <div class="ruta-mandos" role="group" aria-label="Vista de los alrededores">
-        <button type="button" class="ruta-btn" id="ruta-3d" aria-pressed="true">En 3D</button>
-        <button type="button" class="ruta-btn" id="ruta-2d" aria-pressed="false">En plano</button>
+        <button type="button" class="ruta-btn" id="ruta-3d" aria-pressed="false">En 3D</button>
+        <button type="button" class="ruta-btn" id="ruta-2d" aria-pressed="true">En plano</button>
         <button type="button" class="ruta-btn" id="ruta-mover" aria-pressed="false" hidden>Mover el mapa</button>
         <button type="button" class="ruta-btn" id="ruta-volver" hidden>${quieto ? 'Ver todo el valle' : 'Volver al recorrido'}</button>
       </div>
@@ -81,8 +82,10 @@ function montar(el, op = {}) {
   const poster = $('ruta-poster');
   poster?.addEventListener('error', () => { poster.closest('picture').hidden = true; }, { once: true });
 
-  const estado = (window.CORTINA_3D = { VERSION, estado: 'montando', motivo, vista: motivo ? 'plano' : '3d', progreso: quieto ? 1 : 0, quieto });
-  let vivo = true, p = quieto ? 1 : 0, cuaderno = null, G = null, plano = null, anillos = null, motor = null, T = null, preferido = '3d';
+  // el plano va por defecto (fluido en cualquier equipo); el 3D solo se descarga al pulsar «En 3D» (o con ?en-3d)
+  const preferido0 = !motivo && params.has('en-3d') ? '3d' : 'plano';
+  const estado = (window.CORTINA_3D = { VERSION, estado: 'montando', motivo, vista: preferido0, progreso: quieto ? 1 : 0, quieto });
+  let vivo = true, p = quieto ? 1 : 0, cuaderno = null, G = null, plano = null, anillos = null, motor = null, T = null, preferido = preferido0;
   const errores = e => { if (vivo) console.warn('[ruta]', e); };
 
   // ---------- el progreso: cuánto se ha bajado por la pista fijada ----------
@@ -136,7 +139,7 @@ function montar(el, op = {}) {
       motor?.pausar(false);
     }
   }
-  b3.addEventListener('click', () => { preferido = '3d'; ponerVista('3d'); });
+  b3.addEventListener('click', () => { preferido = '3d'; ponerVista('3d'); cargar3D(); });
   b2.addEventListener('click', () => { preferido = 'plano'; ponerVista('plano'); });
 
   function sinTres(txt) {
@@ -151,18 +154,39 @@ function montar(el, op = {}) {
     ponerVista('plano');
   }
 
-  // ---------- la carga ----------
+  // ---------- la carga: guion, terreno.json y el plano; el 3D, aparte y solo si se pide ----------
+  let S = null, pedido3D = null;
   (async () => {
-    const [S, Gm, Tj] = await Promise.all([import('./sol.js' + V), import('./guion.js' + V),
+    const [Sm, Gm, Tj] = await Promise.all([import('./sol.js' + V), import('./guion.js' + V),
       fetch(IMG + 'terreno.json' + V, { priority: 'low' }).then(r => { if (!r.ok) throw new Error('terreno.json ' + r.status); return r.json(); })]);
     if (!vivo) return;
-    G = Gm; T = Tj;
+    S = Sm; G = Gm; T = Tj;
     if (op.hora instanceof Date && !params.has('hora') && !params.has('ahora3d')) S.fijarAhora(op.hora);
     cuaderno = G.crearCuaderno($('ruta-cuaderno'), T); cuaderno(G.fase(p));
     $('ruta-itinerario').innerHTML = G.itinerario(T);
     p = leer(); estado.progreso = p; cuaderno(G.fase(p));
     if (motivo) { sinTres(motivo); estado.estado = 'plano'; return; }
+    estado.estado = 'plano';
+    if (preferido === '3d') { ponerVista('3d'); cargar3D(); } else ponerVista('plano');
+  })().catch(e => {
+    errores(e);
+    if (!vivo) return;
+    // sin los datos no hay ni plano: fuera la pista, vuelve el respaldo entero
+    if (!T) { pista.remove(); escondidos.forEach(x => { x.hidden = false; }); el.classList.remove('ruta-montada'); estado.estado = 'respaldo'; return; }
+    sinTres('El 3D no ha podido cargar aquí: el mapa va en plano.');
+  });
 
+  function cargar3D() {
+    if (pedido3D || !T || motivo) return pedido3D;
+    carga.textContent = 'Cargando el relieve…'; carga.hidden = false;
+    pedido3D = cargarMotor().catch(e => {
+      errores(e);
+      if (vivo) sinTres('El 3D no ha podido cargar aquí: el mapa va en plano.');
+    });
+    return pedido3D;
+  }
+
+  async function cargarMotor() {
     await trasCarga();
     if (!vivo) return;
     const poner = () => { chip.textContent = S.textoChip(); };
@@ -191,13 +215,7 @@ function montar(el, op = {}) {
     const reloj3d = setInterval(() => { if (!vivo || !motor) clearInterval(reloj3d); else { motor.ponerHora(S.ahora()); motor.pedir(); } }, 60000);
     Object.assign(estado, { motor, anillos });
     if (preferido === 'plano') ponerVista('plano');
-  })().catch(e => {
-    errores(e);
-    if (!vivo) return;
-    // sin los datos no hay ni plano: fuera la pista, vuelve el respaldo entero
-    if (!T) { pista.remove(); escondidos.forEach(x => { x.hidden = false; }); el.classList.remove('ruta-montada'); estado.estado = 'respaldo'; return; }
-    sinTres('El 3D no ha podido cargar aquí: el mapa va en plano.');
-  });
+  }
 
   el.dataset.montado = '1';
   const inst = {
