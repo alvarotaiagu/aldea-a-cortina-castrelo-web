@@ -868,9 +868,11 @@
         var rec = escena.__rec == null ? (escena.__rec = ent.offsetHeight - escena.offsetHeight) : escena.__rec;
         return lim((cab - r.top) / (rec * 0.86), 0, 1);
       }
-      var re = escena.getBoundingClientRect();
-      var ini = vh * 0.88, fin = Math.max(vh * 0.12, (vh - re.height) / 2);
-      return lim((ini - re.top) / (ini - fin), 0, 1);
+      // suelto (móvil): se mide con las propias máscaras, no con la escena (que empieza en el título y el texto:
+      // al asomar las máscaras ya iba casi al final y salían giradas). De perfil al asomar por abajo, de frente con el centro a media pantalla.
+      var rf = (mks[0] && mks[0].svg ? mks[0].svg.parentNode : escena).getBoundingClientRect(); // el lienzo: la figure es display:contents
+      var ini = vh * 0.98, fin = Math.min(ini - 1, vh * 0.5 - rf.height / 2);
+      return lim((ini - rf.top) / (ini - fin), 0, 1);
     };
 
     var paso = function (ahora) {

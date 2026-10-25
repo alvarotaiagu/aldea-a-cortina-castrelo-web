@@ -601,6 +601,25 @@ try {
     await ctx.close();
   }
   {
+    // móvil con movimiento: TODOS los titulares se escriben al llegar (en móvil el clip-path del titular dejaba ciego al observador)
+    const { ctx, page } = await nueva({ reducedMotion: 'no-preference', viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true }, { script: sinCookies });
+    await page.goto(PAG + (PAG.includes('?') ? '&' : '?') + 'sin-3d');
+    await fuera(page);
+    const ids = await page.evaluate(() => [...document.querySelectorAll('[data-partir]')].map((h) => h.id).filter(Boolean));
+    const ciegos = [];
+    for (const id of ids) {
+      // dos pasadas: lo que se monta por el camino (módulos, fotos) mueve la página tras el primer salto
+      for (let k = 0; k < 2; k++) {
+        await page.evaluate((id) => { const h = document.getElementById(id); scrollTo(0, h.getBoundingClientRect().top + scrollY - innerHeight * 0.3); }, id);
+        await page.waitForTimeout(350);
+      }
+      const ok = await page.waitForFunction((id) => document.getElementById(id).classList.contains('es-visto'), id, { timeout: 2500 }).then(() => true, () => false);
+      if (!ok) ciegos.push(id);
+    }
+    comprobar(ids.length > 5 && ciegos.length === 0, `móvil 390: los ${ids.length} titulares se escriben al llegar`, ciegos);
+    await ctx.close();
+  }
+  {
     // Lenis y GSAP caídos y con movimiento: la cortina se va igual
     const { ctx, page } = await nueva({ reducedMotion: 'no-preference' }, { cdn: 'caido', script: sinCookies });
     await page.goto(PAG);

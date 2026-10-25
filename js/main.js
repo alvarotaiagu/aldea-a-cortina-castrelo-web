@@ -33,10 +33,13 @@
   // «con-movimiento» se pone DESPUÉS de dejar los observadores listos: si algo fallara, los titulares no se quedan escondidos
   const titulares = $$('[data-partir]');
   if (motion && 'IntersectionObserver' in window) {
+    // se observa el contenedor, no el titular: Chrome aplica el clip-path del propio titular (recortado casi a 0) y no avisaba nunca
+    const deCaja = new Map();
+    titulares.forEach((h) => { const c = h.parentElement || h; if (!deCaja.has(c)) deCaja.set(c, []); deCaja.get(c).push(h); });
     const vistos = new IntersectionObserver((es) => es.forEach((e) => {
-      if (e.isIntersecting) { e.target.classList.add('es-visto'); vistos.unobserve(e.target); }
+      if (e.isIntersecting) { (deCaja.get(e.target) || []).forEach((h) => h.classList.add('es-visto')); vistos.unobserve(e.target); }
     }), { rootMargin: '0px 0px -8% 0px' });
-    titulares.forEach((h) => vistos.observe(h));
+    deCaja.forEach((_, c) => vistos.observe(c));
     raiz.classList.add('con-movimiento');
   } else titulares.forEach((h) => h.classList.add('es-visto'));
 
