@@ -83,45 +83,48 @@
     var hr = hoja.getBoundingClientRect();
     var dr = disco.getBoundingClientRect();
     var hx = dr.left + dr.width / 2 - hr.left, hy = dr.top + dr.height / 2 - hr.top; // la bocallave, en la hoja
-    var sx = dr.left + dr.width / 2, sy = dr.top + dr.height / 2;                    // y en pantalla
-    var vmin = Math.min(vw, vh);
     var KW = +llave.dataset.w, KH = +llave.dataset.h, PX = +llave.dataset.px, PY = +llave.dataset.py;
-    var L = clamp(vmin * 0.56, 200, 540);          // largo de la llave en pantalla
-    var s = L / KH;
+    // ---------- la llave, en 3D de verdad ----------
+    // Una llave entra de frente, hacia dentro de la puerta (no se desliza por la madera): su caña va perpendicular a
+    // la hoja, con el paletón hacia abajo por la ranura de la bocallave, y al girar da un cuarto de vuelta SOBRE SU CAÑA.
+    // Vista de frente sería una raya: la caja de la llave tiene su propia perspectiva, con el ojo arriba a la izquierda
+    // de la cerradura, para verla de perfil saliendo hacia quien mira. Lo que ya está dentro de la puerta (z < 0) se recorta.
+    var dSize = dr.width;                                  // el disco de la bocallave
+    var ax = hx, ay = hy - 0.145 * dSize;                  // el agujero redondo de la bocallave: por ahí va la caña
+    var s = clamp(0.26 * dSize * 1.15 / 32, 0.42, 1.4);     // la caña (≈32 u. de ancho) cabe en el agujero
+    var L = KH * s;                                        // largo de la llave en pantalla
     llave.style.width = (KW * s).toFixed(1) + 'px';
-    // dirección en que viene (de la bocallave hacia la anilla): abajo a la derecha
-    var D = vw >= vh ? [0.82, 0.57] : [0.66, 0.75];
-    var nD = Math.hypot(D[0], D[1]); D = [D[0] / nD, D[1] / nD];
-    var theta = Math.atan2(D[0], -D[1]) * 180 / PI;   // giro de la llave: su punta (abajo) mira hacia la bocallave
-    // distancia a la que la punta ya está fuera de cuadro
-    var tx = D[0] > 0 ? (vw + 60 - sx) / D[0] : 1e9, ty = D[1] > 0 ? (vh + 60 - sy) / D[1] : 1e9;
-    var d0 = Math.min(tx, ty) + 70;
-    var dToca = L * 0.05, dDentro = -L * 0.34;
-    // todo lo que ya pasó de la bocallave (hacia dentro de la puerta) se recorta: la llave «entra»
-    var P = [-D[1], D[0]], BIG = 5000;
-    var pt = function (a, b) { return (hx + P[0] * a + D[0] * b).toFixed(1) + 'px ' + (hy + P[1] * a + D[1] * b).toFixed(1) + 'px'; };
-    caja.style.clipPath = caja.style.webkitClipPath = 'polygon(' + [pt(BIG, 0), pt(BIG, BIG), pt(-BIG, BIG), pt(-BIG, 0)].join(',') + ')';
+    var PERSP = clamp(L * 2.9, 520, 1100);
+    caja.style.perspective = PERSP.toFixed(0) + 'px';
+    caja.style.perspectiveOrigin = (ax - 0.8 * L).toFixed(1) + 'px ' + (ay - 0.62 * L).toFixed(1) + 'px';
+    caja.style.clipPath = caja.style.webkitClipPath = '';
+    gira.style.transform = '';
+    var SENTIDO = -1;                                      // −1: el cuarto de vuelta va en sentido antihorario (el paletón, de abajo a la derecha); +1, al revés
+    var dentro = (PY - 262) * s + 6;                       // hasta dónde se mete: el paletón entero dentro de la puerta
+    var vmin = Math.min(vw, vh);
+    // de dónde viene: de cerca de quien mira y de abajo a la derecha, fuera de cuadro
+    var z0 = PERSP * 0.62, x0 = ax + vmin * 0.42, y0 = ay + vmin * 0.36;
 
-    function pintarLlave(dist, rod) {
-      var tx_ = hx + D[0] * dist, ty_ = hy + D[1] * dist;
-      llave.style.transform = 'translate(' + tx_.toFixed(1) + 'px,' + ty_.toFixed(1) + 'px) rotate(' + theta.toFixed(2) + 'deg) translate(' + (-PX * s).toFixed(1) + 'px,' + (-PY * s).toFixed(1) + 'px)';
-      // el giro sobre su eje: la llave de cara se ve de canto (proyección de un cuarto de vuelta, con su grosor)
-      gira.style.transform = 'scaleX(' + Math.max(0.13, Math.cos(clamp(rod, 0, 1) * PI / 2)).toFixed(3) + ')';
+    function pintarLlave(k, zp, rod) {
+      // k: 0 → 1 de la llegada (posición en pantalla); zp: punta de la llave en z (px, < 0 = dentro); rod: 0 → 1 del giro
+      var x = lerp(x0, ax, k), y = lerp(y0, ay, k);
+      var giro = 90 + SENTIDO * 90 * rod;
+      llave.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,' + zp.toFixed(1) + 'px) rotateZ(' + giro.toFixed(2) + 'deg) rotateX(-90deg) translate(' + (-PX * s).toFixed(1) + 'px,' + (-PY * s).toFixed(1) + 'px)';
+      // lo que ha pasado del plano de la puerta no se ve (en coordenadas de la llave: la punta está abajo)
+      var corte = Math.max(0, KH * s - PY * s - zp);
+      llave.style.clipPath = llave.style.webkitClipPath = corte > 0.5 ? 'inset(0 0 ' + corte.toFixed(1) + 'px 0)' : '';
     }
-    var discoBase = -53;
     var persp = parseFloat(w.getComputedStyle(cort).perspective) || Math.max(900, vw * 1.25);
 
     function pintar(t) {
       // ----- la llave -----
-      var dist;
-      if (t <= T.entra0) dist = d0;
-      else if (t < T.entra1) dist = lerp(d0, dToca, easeOutQuart((t - T.entra0) / (T.entra1 - T.entra0)));
-      else if (t < T.mete1) dist = lerp(dToca, dDentro, easeInOutCubic((t - T.entra1) / (T.mete1 - T.entra1)));
-      else dist = dDentro;
+      // llega alineada con la bocallave y a un dedo de la puerta; luego se mete de frente
+      var k = t <= T.entra0 ? 0 : easeOutQuart((t - T.entra0) / (T.entra1 - T.entra0));
+      var zp = t < T.entra1 ? lerp(z0, 4, k) : (t < T.mete1 ? lerp(4, -dentro, easeInOutCubic((t - T.entra1) / (T.mete1 - T.entra1))) : -dentro);
       var pg = t <= T.gira0 ? 0 : easeOutBack((t - T.gira0) / (T.gira1 - T.gira0), .9);
       if (t >= T.entra0 && llave.style.opacity !== '1') llave.style.opacity = '1';
-      pintarLlave(dist, pg);
-      disco.style.transform = 'translate(-50%,-50%) rotate(' + (discoBase + 90 * pg).toFixed(2) + 'deg)';
+      pintarLlave(k, zp, pg);
+      // la bocallave no gira: es la llave la que da la vuelta
       // sacudida del pestillo al llegar al tope
       var sac = t > T.gira1 - 90 && t < T.gira1 + 120 ? Math.sin(clamp((t - (T.gira1 - 90)) / 210, 0, 1) * PI) : 0;
       cerradura.style.transform = 'translate(-50%,-52%) scale(' + (1 + 0.014 * sac).toFixed(4) + ')';

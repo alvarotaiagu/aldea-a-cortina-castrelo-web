@@ -67,7 +67,7 @@ html.cortina-activa, html.cortina-activa body { overflow: hidden; }
 #cortina .cortina__placa { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 #cortina .cortina__disco {
   position: absolute; left: 50%; top: 32.63%; width: 31.67%; aspect-ratio: 1;
-  transform: translate(-50%, -50%) rotate(-53deg); will-change: transform;
+  transform: translate(-50%, -50%);
 }
 #cortina .cortina__disco svg { width: 100%; height: 100%; display: block; }
 
@@ -82,11 +82,12 @@ html.cortina-activa #cortina.es-lista .cortina__nombre { opacity: .82; }
 #cortina .cortina__nombre-1 { font: italic 400 clamp(.95rem, 2.1vmin, 1.5rem)/1.15 var(--f-tit, 'Ibarra Real Nova', Georgia, serif); letter-spacing: .01em; }
 #cortina .cortina__nombre-2 { font: 400 clamp(.6rem, 1.3vmin, .8rem)/1.2 var(--f-mono, 'Overpass Mono', ui-monospace, monospace); letter-spacing: .34em; text-transform: uppercase; opacity: .8; }
 
-/* la llave: una caja sin transform (recorta lo que ya ha entrado en la cerradura) con la llave dentro */
+/* la llave: una caja sin transform con su propia perspectiva (la pone llave.js) y la llave en 3D dentro */
+/* sin drop-shadow: con la llave en 3D se repintaba entero en cada fotograma (tareas largas con CPU lenta); el canto oscuro ya va en el dibujo */
 #cortina .cortina__llave-caja { position: absolute; inset: 0; pointer-events: none; }
 #cortina .cortina__llave {
   position: absolute; left: 0; top: 0; transform-origin: 0 0; will-change: transform; opacity: 0;
-  filter: drop-shadow(0 .5vmin .9vmin rgba(0, 0, 0, .6));
+  backface-visibility: visible;
 }
 #cortina .cortina__llave-gira { transform-origin: 49.6% 50%; will-change: transform; }
 #cortina .cortina__llave svg { display: block; width: 100%; height: auto; overflow: visible; }
